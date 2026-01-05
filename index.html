@@ -1794,6 +1794,144 @@
             hideLoading();
         }
         
+        // Add this function to test Firebase connection
+async function testFirebaseConnection() {
+    console.log('Testing Firebase connection...');
+    
+    try {
+        // Test write
+        const testRef = database.ref('testConnection');
+        await testRef.set({
+            timestamp: Date.now(),
+            message: 'Test connection successful'
+        });
+        console.log('✅ Firebase write test: SUCCESS');
+        
+        // Test read
+        const snapshot = await testRef.once('value');
+        console.log('✅ Firebase read test: SUCCESS', snapshot.val());
+        
+        return true;
+    } catch (error) {
+        console.error('❌ Firebase test failed:', error);
+        return false;
+    }
+}
+
+// Then update your initApp function to test Firebase
+async function initApp() {
+    // Show loading overlay
+    showLoading('აპლიკაციის ჩატვირთვა...');
+    
+    // Test Firebase connection first
+    const firebaseConnected = await testFirebaseConnection();
+    
+    if (!firebaseConnected) {
+        showError('Firebase კავშირი ვერ მოხერხდა. გამოიყენება ლოკალური მონაცემები.');
+        // Load from localStorage only
+        loadFromLocalStorage();
+    } else {
+        // Setup event listeners
+        setupEventListeners();
+        
+        // Check if user is already logged in
+        const savedUser = localStorage.getItem('bookmaster_user');
+        if (savedUser) {
+            currentUser = savedUser;
+            loginPage.style.display = 'none';
+            mainPage.style.display = 'block';
+            await loadData();
+        }
+    }
+    
+    hideLoading();
+}
+
+// Update the saveData function to be more robust
+async function saveData() {
+    try {
+        console.log('Saving data to Firebase...');
+        
+        // Convert arrays to objects for Firebase
+        const booksObj = {};
+        books.forEach(book => {
+            booksObj[book.id] = book;
+        });
+        
+        const salesObj = {};
+        salesHistory.forEach(sale => {
+            salesObj[sale.bookId] = sale;
+        });
+        
+        // Save to Firebase
+        await database.ref('books').set(booksObj);
+        await database.ref('sales').set(salesObj);
+        await database.ref('nextBookId').set(nextBookId);
+        
+        console.log('✅ Data saved to Firebase successfully');
+        
+        // Also save to localStorage as backup
+        localStorage.setItem('bookmaster_books', JSON.stringify(books));
+        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+        localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+        
+        console.log('✅ Data saved to localStorage successfully');
+        
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Error saving to Firebase:', error);
+        
+        // Try saving to localStorage only
+        try {
+            localStorage.setItem('bookmaster_books', JSON.stringify(books));
+            localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+            localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+            console.log('✅ Data saved to localStorage (fallback)');
+            return true;
+        } catch (localError) {
+            console.error('❌ Error saving to localStorage:', localError);
+            showError('მონაცემების შენახვა ვერ მოხერხდა');
+            return false;
+        }
+    }
+}
+
+// Add this function to load from localStorage
+function loadFromLocalStorage() {
+    try {
+        const savedBooks = localStorage.getItem('bookmaster_books');
+        const savedSales = localStorage.getItem('bookmaster_sales');
+        const savedNextId = localStorage.getItem('bookmaster_nextId');
+        
+        if (savedBooks && savedSales) {
+            books = JSON.parse(savedBooks);
+            salesHistory = JSON.parse(savedSales);
+            nextBookId = parseInt(savedNextId) || (books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1);
+            renderBooks(books);
+            showSuccess('მონაცემები ჩაიტვირთა ლოკალურად');
+        } else {
+            // Initialize with sample data
+            initializeSampleData();
+        }
+        
+        // Setup event listeners
+        setupEventListeners();
+        
+        // Check if user is already logged in
+        const savedUser = localStorage.getItem('bookmaster_user');
+        if (savedUser) {
+            currentUser = savedUser;
+            loginPage.style.display = 'none';
+            mainPage.style.display = 'block';
+        }
+        
+    } catch (error) {
+        console.error('Error loading from localStorage:', error);
+        initializeSampleData();
+    }
+}
+
         // Setup event listeners
         function setupEventListeners() {
             // Login
