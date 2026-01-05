@@ -373,188 +373,179 @@
         }
         
         @media (max-width: 768px) {
-    /* Make modals take more screen height */
-    .modal-content {
-        max-height: 85vh; /* Increased from 95vh to give more content space */
-        height: auto;
-        display: flex;
-        flex-direction: column;
-    }
-    
-    /* შემოსავალი modal specific */
-    #incomeModal .modal-body {
-        max-height: 60vh;
-        overflow-y: auto;
-        padding-bottom: 10px;
-    }
-    
-    /* ახალი წიგნის დამატება modal specific */
-    #addBookModal form {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-    
-    #addBookModal .modal-body {
-        flex-grow: 1;
-        overflow-y: auto;
-        max-height: 60vh;
-        padding-bottom: 10px;
-    }
-    
-    /* დეტალები modal specific */
-    #bookDetailsModal .book-details {
-        max-height: 60vh;
-        overflow-y: auto;
-        padding-bottom: 10px;
-    }
-    
-    /* Make sure modal footer stays at bottom */
-    .modal-footer {
-        position: sticky;
-        bottom: 0;
-        background-color: white;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        margin-top: auto;
-    }
-}
+            .modal-content {
+                max-height: 85vh;
+                height: auto;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            #incomeModal .modal-body {
+                max-height: 60vh;
+                overflow-y: auto;
+                padding-bottom: 10px;
+            }
+            
+            #addBookModal form {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            
+            #addBookModal .modal-body {
+                flex-grow: 1;
+                overflow-y: auto;
+                max-height: 60vh;
+                padding-bottom: 10px;
+            }
+            
+            #bookDetailsModal .book-details {
+                max-height: 60vh;
+                overflow-y: auto;
+                padding-bottom: 10px;
+            }
+            
+            .modal-footer {
+                position: sticky;
+                bottom: 0;
+                background-color: white;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                margin-top: auto;
+            }
+        }
 
-@media (max-width: 640px) {
-    .modal-content {
-        max-height: 90vh; /* Even taller on very small screens */
-        max-width: 95vw;
-    }
-    
-    /* Adjust modal headers */
-    .modal-header {
-        padding: 15px;
-        position: sticky;
-        top: 0;
-        background-color: white;
-        z-index: 10;
-    }
-    
-    /* Adjust modal bodies */
-    #incomeModal .modal-body,
-    #addBookModal .modal-body,
-    #bookDetailsModal .modal-body {
-        max-height: 65vh; /* More space for content */
-    }
-    
-    /* Specific adjustments for შემოსავალი modal */
-    .income-stats {
-        max-height: 40vh;
-        overflow-y: auto;
-        padding-right: 5px;
-    }
-    
-    .sales-table-container {
-        max-height: 40vh;
-        overflow-y: auto;
-    }
-    
-    /* Specific adjustments for დეტალები modal */
-    .book-details {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .book-details-images {
-        flex-shrink: 0;
-    }
-    
-    .book-details-info {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding-bottom: 10px;
-    }
-}
+        @media (max-width: 640px) {
+            .modal-content {
+                max-height: 90vh;
+                max-width: 95vw;
+            }
+            
+            .modal-header {
+                padding: 15px;
+                position: sticky;
+                top: 0;
+                background-color: white;
+                z-index: 10;
+            }
+            
+            #incomeModal .modal-body,
+            #addBookModal .modal-body,
+            #bookDetailsModal .modal-body {
+                max-height: 65vh;
+            }
+            
+            .income-stats {
+                max-height: 40vh;
+                overflow-y: auto;
+                padding-right: 5px;
+            }
+            
+            .sales-table-container {
+                max-height: 40vh;
+                overflow-y: auto;
+            }
+            
+            .book-details {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .book-details-images {
+                flex-shrink: 0;
+            }
+            
+            .book-details-info {
+                flex-grow: 1;
+                overflow-y: auto;
+                padding-bottom: 10px;
+            }
+        }
 
-@media (max-width: 640px) {
-    .books-grid {
-        grid-template-columns: repeat(5, 1fr);
-        gap: 6px; /* Even smaller gap */
-    }
-    
-    .book-card {
-        min-height: auto;
-        display: flex;
-        flex-direction: column;
-        height: 100%; /* Make card take full height */
-    }
-    
-    .book-image-container {
-        height: 65px; /* Smaller image area */
-        flex-shrink: 0; /* Don't shrink image */
-    }
-    
-    .book-image {
-        object-fit: contain;
-        background-color: #f8f9fa;
-    }
-    
-    .book-info {
-        padding: 5px 3px; /* Minimal padding */
-        flex-grow: 1; /* Take remaining space */
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .book-title {
-        font-size: 9px; /* Very small but readable */
-        margin-bottom: 2px;
-        line-height: 1.1;
-        display: -webkit-box;
-        -webkit-line-clamp: 3; /* Allow 3 lines for title */
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        font-weight: 600;
-        min-height: 30px; /* Reserve space for 3 lines */
-    }
-    
-    .book-description {
-        font-size: 7px; /* Tiny but readable */
-        line-height: 1.1;
-        display: -webkit-box;
-        -webkit-line-clamp: 2; /* Show 2 lines max */
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        margin-bottom: 5px;
-        color: #666;
-        flex-grow: 0; /* Don't grow */
-    }
-    
-    .book-footer {
-        margin-top: auto; /* Push to bottom */
-        flex-direction: column; /* Stack vertically */
-        gap: 2px;
-    }
-    
-    .book-stock {
-        font-size: 8px;
-        color: var(--success-color);
-        font-weight: 600;
-        white-space: nowrap;
-    }
-    
-    .book-price {
-        font-size: 9px;
-        font-weight: 700;
-        color: var(--dark-color);
-    }
-    
-    .sell-btn {
-        font-size: 8px;
-        padding: 3px 5px;
-        min-width: 40px;
-        margin-top: 2px;
-        white-space: nowrap;
-        width: 100%; /* Full width */
-        text-align: center;
-    }
-}
+        @media (max-width: 640px) {
+            .books-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 6px;
+            }
+            
+            .book-card {
+                min-height: auto;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            
+            .book-image-container {
+                height: 65px;
+                flex-shrink: 0;
+            }
+            
+            .book-image {
+                object-fit: contain;
+                background-color: #f8f9fa;
+            }
+            
+            .book-info {
+                padding: 5px 3px;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .book-title {
+                font-size: 9px;
+                margin-bottom: 2px;
+                line-height: 1.1;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                font-weight: 600;
+                min-height: 30px;
+            }
+            
+            .book-description {
+                font-size: 7px;
+                line-height: 1.1;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                margin-bottom: 5px;
+                color: #666;
+                flex-grow: 0;
+            }
+            
+            .book-footer {
+                margin-top: auto;
+                flex-direction: column;
+                gap: 2px;
+            }
+            
+            .book-stock {
+                font-size: 8px;
+                color: var(--success-color);
+                font-weight: 600;
+                white-space: nowrap;
+            }
+            
+            .book-price {
+                font-size: 9px;
+                font-weight: 700;
+                color: var(--dark-color);
+            }
+            
+            .sell-btn {
+                font-size: 8px;
+                padding: 3px 5px;
+                min-width: 40px;
+                margin-top: 2px;
+                white-space: nowrap;
+                width: 100%;
+                text-align: center;
+            }
+        }
         
         .book-card {
             background-color: white;
@@ -587,13 +578,13 @@
             }
         }
         
-.book-image {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Changed from 'cover' to 'contain' */
-    transition: var(--transition);
-    background-color: #f5f5f5; /* Add background for empty space */
-}
+        .book-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: var(--transition);
+            background-color: #f5f5f5;
+        }
         
         .book-card:hover .book-image {
             transform: scale(1.05);
@@ -656,6 +647,35 @@
             color: var(--dark-color);
         }
         
+        /* Add Edit Button Style */
+        .book-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .edit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: var(--transition);
+            min-width: 70px;
+            margin-right: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .edit-btn:hover {
+            background-color: #2a4ed8;
+        }
+        
         .sell-btn {
             background-color: var(--warning-color);
             color: white;
@@ -667,6 +687,10 @@
             font-size: 12px;
             transition: var(--transition);
             min-width: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
         
         .sell-btn:hover {
@@ -676,6 +700,22 @@
         .sell-btn:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+        }
+        
+        @media (max-width: 640px) {
+            .book-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .edit-btn, .sell-btn {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 5px;
+                font-size: 10px;
+                padding: 4px 8px;
+                min-width: auto;
+            }
         }
         
         /* Modal Styles */
@@ -972,6 +1012,28 @@
             color: var(--primary-color);
         }
         
+        /* Add Edit Button Style */
+        .btn-edit {
+            background: linear-gradient(90deg, #20bf55, #01baef);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(32, 191, 85, 0.3);
+        }
+        
         .btn-danger {
             background-color: var(--danger-color);
             color: white;
@@ -999,24 +1061,24 @@
             margin-bottom: 20px;
         }
         
-@media (max-width: 640px) {
-    .income-stats {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px; /* Reduce gap */
-    }
-    
-    .stat-card {
-        padding: 15px; /* Reduce padding */
-    }
-    
-    .stat-value {
-        font-size: 20px; /* Smaller font */
-    }
-    
-    .stat-title {
-        font-size: 12px; /* Smaller font */
-    }
-}
+        @media (max-width: 640px) {
+            .income-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 20px;
+            }
+            
+            .stat-title {
+                font-size: 12px;
+            }
+        }
         
         .stat-card {
             background-color: white;
@@ -1158,31 +1220,31 @@
             box-shadow: var(--box-shadow);
         }
         
-@media (max-width: 640px) {
-    .book-details-main-image {
-        height: 150px; /* Smaller height */
-    }
-    
-    .book-details {
-        gap: 15px; /* Reduce gap */
-    }
-    
-    .book-details-title {
-        font-size: 18px; /* Smaller title */
-    }
-    
-    .book-details-description {
-        font-size: 14px; /* Smaller description */
-    }
-    
-    .details-stat {
-        padding: 8px; /* Less padding */
-    }
-    
-    .details-stat-value {
-        font-size: 16px; /* Smaller value */
-    }
-}
+        @media (max-width: 640px) {
+            .book-details-main-image {
+                height: 150px;
+            }
+            
+            .book-details {
+                gap: 15px;
+            }
+            
+            .book-details-title {
+                font-size: 18px;
+            }
+            
+            .book-details-description {
+                font-size: 14px;
+            }
+            
+            .details-stat {
+                padding: 8px;
+            }
+            
+            .details-stat-value {
+                font-size: 16px;
+            }
+        }
         
         .book-details-thumbnails {
             display: flex;
@@ -1270,6 +1332,13 @@
         
         .details-stat-value.income {
             color: #20bf55;
+        }
+        
+        /* Edit Actions */
+        .edit-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
         
         /* Toast Notifications */
@@ -1529,7 +1598,7 @@
                 gap: 10px;
             }
             
-            .btn-primary, .btn-secondary {
+            .btn-primary, .btn-secondary, .btn-edit {
                 width: 100%;
                 justify-content: center;
             }
@@ -1578,7 +1647,7 @@
         /* Improve touch targets on mobile */
         @media (max-width: 768px) {
             button, input, select, textarea {
-                font-size: 16px !important; /* Prevents iOS zoom on focus */
+                font-size: 16px !important;
             }
             
             .book-card {
@@ -1774,6 +1843,93 @@
         </div>
     </div>
     
+    <!-- Edit Book Modal -->
+    <div class="modal" id="editBookModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">წიგნის რედაქტირება</h2>
+                <button class="close-btn" id="closeEditModal"></button>
+            </div>
+            
+            <form id="editBookForm">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editBookTitle" class="required-field">წიგნის სახელი</label>
+                            <input type="text" id="editBookTitle" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editBookColor" class="required-field">წიგნის ფერი</label>
+                            <select id="editBookColor" class="book-color-select" required>
+                                <option value="">აირჩიეთ ფერი</option>
+                                <option value="წითელი">წითელი</option>
+                                <option value="ლურჯი">ლურჯი</option>
+                                <option value="მწვანე">მწვანე</option>
+                                <option value="ყვითელი">ყვითელი</option>
+                                <option value="შავი">შავი</option>
+                                <option value="თეთრი">თეთრი</option>
+                                <option value="ყავისფერი">ყავისფერი</option>
+                                <option value="ნაცრისფერი">ნაცრისფერი</option>
+                                <option value="ნარინჯისფერი">ნარინჯისფერი</option>
+                                <option value="იასამნისფერი">იასამნისფერი</option>
+                                <option value="ვარდისფერი">ვარდისფერი</option>
+                                <option value="other">სხვა</option>
+                            </select>
+                            <div id="editCustomColorContainer" class="custom-color-input">
+                                <input type="text" id="editCustomColor" placeholder="შეიყვანეთ ფერი ქართულად" style="margin-top: 10px;">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editBookStock" class="required-field">რაოდენობა</label>
+                            <input type="number" id="editBookStock" min="1" value="1" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editBookPrice" class="required-field">ფასი</label>
+                            <input type="number" id="editBookPrice" min="1" value="35" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="editBookDescription" class="required-field">აღწერა</label>
+                        <textarea id="editBookDescription" placeholder="წიგნის აღწერა..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="editBookImages" class="required-field">ფოტოები</label>
+                        <div class="image-upload-container" id="editImageUploadArea">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3>ატვირთვა</h3>
+                            <p>PNG, JPG, GIF, HEIC ფორმატი, მაქსიმუმ 5MB. მინიმუმ 1 ფოტო</p>
+                            <input type="file" id="editBookImages" accept="image/*,image/heic,image/heif" multiple style="display: none;">
+                        </div>
+                        <div class="image-preview" id="editImagePreview">
+                            <!-- Image previews will be added here -->
+                        </div>
+                        <div id="editImageError" style="color: var(--danger-color); font-size: 13px; margin-top: 5px; display: none;">
+                            <i class="fas fa-exclamation-circle"></i> გთხოვთ ატვირთოთ მინიმუმ ერთი ფოტო
+                        </div>
+                    </div>
+                    
+                    <div class="edit-actions">
+                        <button type="button" class="btn-danger" id="deleteImagesBtn">
+                            <i class="fas fa-trash"></i> ყველა ფოტოს წაშლა
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelEditBook">გაუქმება</button>
+                    <button type="submit" class="btn-edit" id="updateBookBtn">
+                        <i class="fas fa-save"></i> ცვლილებების შენახვა
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <!-- Book Details Modal -->
     <div class="modal" id="bookDetailsModal">
         <div class="modal-content">
@@ -1925,7 +2081,9 @@
         let books = [];
         let currentUser = null;
         let selectedImages = [];
+        let editSelectedImages = [];
         let currentBookId = null;
+        let editingBookId = null;
         let nextBookId = 1;
         let salesHistory = [];
         let sortDirection = { title: 'asc', sold: 'desc', left: 'desc', revenue: 'desc', lastSold: 'desc' };
@@ -1984,146 +2142,73 @@
         const confirmAction = document.getElementById('confirmAction');
         const imageError = document.getElementById('imageError');
         
-// Initialize the app
-async function initApp() {
-    // Show loading overlay
-    showLoading('აპლიკაციის ჩატვირთვა...');
-    
-    // Test Firebase connection first
-    const firebaseConnected = await testFirebaseConnection();
-    
-    if (!firebaseConnected) {
-        showWarning('Firebase კავშირი ვერ მოხერხდა. გამოიყენება ლოკალური მონაცემები.');
-        // Load from localStorage only
-        loadFromLocalStorage();
-    } else {
-        // Setup event listeners
-        setupEventListeners();
+        // Edit modal elements
+        const editBookModal = document.getElementById('editBookModal');
+        const closeEditModal = document.getElementById('closeEditModal');
+        const cancelEditBook = document.getElementById('cancelEditBook');
+        const editBookForm = document.getElementById('editBookForm');
+        const editImageUploadArea = document.getElementById('editImageUploadArea');
+        const editBookImagesInput = document.getElementById('editBookImages');
+        const editImagePreview = document.getElementById('editImagePreview');
+        const editImageError = document.getElementById('editImageError');
+        const editBookColorSelect = document.getElementById('editBookColor');
+        const editCustomColorContainer = document.getElementById('editCustomColorContainer');
+        const editCustomColorInput = document.getElementById('editCustomColor');
+        const updateBookBtn = document.getElementById('updateBookBtn');
+        const deleteImagesBtn = document.getElementById('deleteImagesBtn');
         
-        // Check if user is already logged in
-        const savedUser = localStorage.getItem('bookmaster_user');
-        if (savedUser) {
-            currentUser = savedUser;
-            loginPage.style.display = 'none';
-            mainPage.style.display = 'block';
-            await loadData();
-        }
-    }
-    
-    hideLoading();
-}
-        
-        // Add this function to test Firebase connection
-async function testFirebaseConnection() {
-    console.log('Testing Firebase connection...');
-    
-    try {
-        // Test write
-        const testRef = database.ref('testConnection');
-        await testRef.set({
-            timestamp: Date.now(),
-            message: 'Test connection successful'
-        });
-        console.log('✅ Firebase write test: SUCCESS');
-        
-        // Test read
-        const snapshot = await testRef.once('value');
-        console.log('✅ Firebase read test: SUCCESS', snapshot.val());
-        
-        return true;
-    } catch (error) {
-        console.error('❌ Firebase test failed:', error);
-        return false;
-    }
-}
-
-
-// Update the saveData function to be more robust
-async function saveData() {
-    try {
-        console.log('Saving data...');
-        
-        // Convert arrays to objects for Firebase
-        const booksObj = {};
-        books.forEach(book => {
-            booksObj[book.id] = book;
-        });
-        
-        const salesObj = {};
-        salesHistory.forEach(sale => {
-            salesObj[sale.bookId] = sale;
-        });
-        
-        // Save to Firebase
-        await database.ref('books').set(booksObj);
-        await database.ref('sales').set(salesObj);
-        await database.ref('nextBookId').set(nextBookId);
-        
-        console.log('Data saved to Firebase successfully');
-        
-        // Also save to localStorage as backup
-        localStorage.setItem('bookmaster_books', JSON.stringify(books));
-        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-        localStorage.setItem('bookmaster_nextId', nextBookId.toString());
-        
-        console.log('Data saved to localStorage successfully');
-        
-        return true;
-        
-    } catch (error) {
-        console.error('Error saving to Firebase:', error);
-        
-        try {
-            // Fallback to localStorage only
-            localStorage.setItem('bookmaster_books', JSON.stringify(books));
-            localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-            localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+        // Initialize the app
+        async function initApp() {
+            // Show loading overlay
+            showLoading('აპლიკაციის ჩატვირთვა...');
             
-            console.log('Data saved to localStorage only');
-            showWarning('მონაცემები შენახულია მხოლოდ ლოკალურად');
-            return true;
-        } catch (localError) {
-            console.error('Error saving to localStorage:', localError);
-            showError('მონაცემების შენახვა ვერ მოხერხდა');
-            return false;
-        }
-    }
-}
-
-// Add this function to load from localStorage
-function loadFromLocalStorage() {
-    try {
-        const savedBooks = localStorage.getItem('bookmaster_books');
-        const savedSales = localStorage.getItem('bookmaster_sales');
-        const savedNextId = localStorage.getItem('bookmaster_nextId');
-        
-        if (savedBooks && savedSales) {
-            books = JSON.parse(savedBooks);
-            salesHistory = JSON.parse(savedSales);
-            nextBookId = parseInt(savedNextId) || (books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1);
-            renderBooks(books);
-            showSuccess('მონაცემები ჩაიტვირთა ლოკალურად');
-        } else {
-            // Initialize with sample data
-            initializeSampleData();
+            // Test Firebase connection first
+            const firebaseConnected = await testFirebaseConnection();
+            
+            if (!firebaseConnected) {
+                showWarning('Firebase კავშირი ვერ მოხერხდა. გამოიყენება ლოკალური მონაცემები.');
+                // Load from localStorage only
+                loadFromLocalStorage();
+            } else {
+                // Setup event listeners
+                setupEventListeners();
+                
+                // Check if user is already logged in
+                const savedUser = localStorage.getItem('bookmaster_user');
+                if (savedUser) {
+                    currentUser = savedUser;
+                    loginPage.style.display = 'none';
+                    mainPage.style.display = 'block';
+                    await loadData();
+                }
+            }
+            
+            hideLoading();
         }
         
-        // Setup event listeners
-        setupEventListeners();
-        
-        // Check if user is already logged in
-        const savedUser = localStorage.getItem('bookmaster_user');
-        if (savedUser) {
-            currentUser = savedUser;
-            loginPage.style.display = 'none';
-            mainPage.style.display = 'block';
+        // Test Firebase connection
+        async function testFirebaseConnection() {
+            console.log('Testing Firebase connection...');
+            
+            try {
+                // Test write
+                const testRef = database.ref('testConnection');
+                await testRef.set({
+                    timestamp: Date.now(),
+                    message: 'Test connection successful'
+                });
+                console.log('✅ Firebase write test: SUCCESS');
+                
+                // Test read
+                const snapshot = await testRef.once('value');
+                console.log('✅ Firebase read test: SUCCESS', snapshot.val());
+                
+                return true;
+            } catch (error) {
+                console.error('❌ Firebase test failed:', error);
+                return false;
+            }
         }
-        
-    } catch (error) {
-        console.error('Error loading from localStorage:', error);
-        initializeSampleData();
-    }
-}
 
         // Setup event listeners
         function setupEventListeners() {
@@ -2268,6 +2353,67 @@ function loadFromLocalStorage() {
             
             confirmAction.addEventListener('click', handleConfirmDelete);
             
+            // Edit modal
+            closeEditModal.addEventListener('click', () => {
+                editBookModal.style.display = 'none';
+            });
+            
+            cancelEditBook.addEventListener('click', () => {
+                editBookModal.style.display = 'none';
+            });
+            
+            // Edit book color selection
+            editBookColorSelect.addEventListener('change', function() {
+                if (this.value === 'other') {
+                    editCustomColorContainer.classList.add('show');
+                    editCustomColorInput.focus();
+                } else {
+                    editCustomColorContainer.classList.remove('show');
+                }
+            });
+            
+            // Edit form submission
+            editBookForm.addEventListener('submit', handleUpdateBook);
+            
+            // Edit image upload
+            editImageUploadArea.addEventListener('click', () => {
+                editBookImagesInput.click();
+            });
+            
+            editImageUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                editImageUploadArea.style.borderColor = 'var(--primary-color)';
+                editImageUploadArea.style.backgroundColor = 'rgba(67, 97, 238, 0.05)';
+            });
+            
+            editImageUploadArea.addEventListener('dragleave', () => {
+                editImageUploadArea.style.borderColor = '#e1e5ee';
+                editImageUploadArea.style.backgroundColor = 'white';
+            });
+            
+            editImageUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                editImageUploadArea.style.borderColor = '#e1e5ee';
+                editImageUploadArea.style.backgroundColor = 'white';
+                
+                if (e.dataTransfer.files.length) {
+                    handleEditImageUpload(e.dataTransfer.files);
+                }
+            });
+            
+            editBookImagesInput.addEventListener('change', (e) => {
+                handleEditImageUpload(e.target.files);
+            });
+            
+            // Delete all images button
+            deleteImagesBtn.addEventListener('click', () => {
+                if (confirm('დარწმუნებული ხართ, რომ გსურთ ყველა ფოტოს წაშლა?')) {
+                    editSelectedImages = [];
+                    editImagePreview.innerHTML = '';
+                    editImageError.style.display = 'block';
+                }
+            });
+            
             // Close modals when clicking outside
             window.addEventListener('click', (e) => {
                 if (e.target.classList.contains('modal')) {
@@ -2279,174 +2425,158 @@ function loadFromLocalStorage() {
             });
         }
         
-async function loadData() {
-    try {
-        showLoading('მონაცემების ჩატვირთვა...');
-        
-        // Clear existing data
-        books = [];
-        salesHistory = [];
-        
-        // Load data from Firebase
-        const booksRef = database.ref('books');
-        const salesRef = database.ref('sales');
-        const nextIdRef = database.ref('nextBookId');
-        
-        // Use Promise.all to load all data at once
-        const [booksSnapshot, salesSnapshot, nextIdSnapshot] = await Promise.all([
-            booksRef.once('value'),
-            salesRef.once('value'),
-            nextIdRef.once('value')
-        ]);
-        
-        const booksData = booksSnapshot.val();
-        const salesData = salesSnapshot.val();
-        const nextIdData = nextIdSnapshot.val();
-        
-        // Process books data
-        if (booksData) {
-            // Convert Firebase object to array
-            books = Object.values(booksData);
-            console.log('Loaded books from Firebase:', books.length);
-        }
-        
-        // Process sales data
-        if (salesData) {
-            salesHistory = Object.values(salesData);
-            console.log('Loaded sales from Firebase:', salesHistory.length);
-        }
-        
-        // Process next ID
-        if (nextIdData) {
-            nextBookId = nextIdData;
-        } else {
-            nextBookId = books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1;
-        }
-        
-        // Check if we have data, if not initialize with sample
-        if (books.length === 0) {
-            console.log('Initializing with sample data');
-            await initializeSampleData();
-        } else {
-            // Sync sales history with books (in case of missing entries)
-            books.forEach(book => {
-                const existingSale = salesHistory.find(s => s.bookId === book.id);
-                if (!existingSale) {
-                    salesHistory.push({
-                        bookId: book.id,
-                        title: book.title,
-                        images: book.images,
-                        sold: book.sold || 0,
-                        stock: book.stock,
-                        initialStock: book.initialStock,
-                        revenue: (book.sold || 0) * book.price,
-                        lastSold: book.lastSold || null
-                    });
+        // Load data from Firebase or localStorage
+        async function loadData() {
+            try {
+                showLoading('მონაცემების ჩატვირთვა...');
+                
+                // Clear existing data
+                books = [];
+                salesHistory = [];
+                
+                // Load data from Firebase
+                const booksRef = database.ref('books');
+                const salesRef = database.ref('sales');
+                const nextIdRef = database.ref('nextBookId');
+                
+                // Use Promise.all to load all data at once
+                const [booksSnapshot, salesSnapshot, nextIdSnapshot] = await Promise.all([
+                    booksRef.once('value'),
+                    salesRef.once('value'),
+                    nextIdRef.once('value')
+                ]);
+                
+                const booksData = booksSnapshot.val();
+                const salesData = salesSnapshot.val();
+                const nextIdData = nextIdSnapshot.val();
+                
+                // Process books data
+                if (booksData) {
+                    // Convert Firebase object to array
+                    books = Object.values(booksData);
+                    console.log('Loaded books from Firebase:', books.length);
                 }
-            });
-            
-            // Save the synced data back to Firebase
-            const booksObj = {};
-            books.forEach(book => {
-                booksObj[book.id] = book;
-            });
-            
-            const salesObj = {};
-            salesHistory.forEach(sale => {
-                salesObj[sale.bookId] = sale;
-            });
-            
-            await database.ref('books').set(booksObj);
-            await database.ref('sales').set(salesObj);
-        }
-        
-        // Also update localStorage with Firebase data
-        localStorage.setItem('bookmaster_books', JSON.stringify(books));
-        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-        localStorage.setItem('bookmaster_nextId', nextBookId.toString());
-        
-        // Render books
-        renderBooks(books);
-        hideLoading();
-        showSuccess('მონაცემები წარმატებით ჩაიტვირთა!');
-        
-    } catch (error) {
-        console.error('Error loading from Firebase:', error);
-        
-        // Try loading from localStorage as fallback
-        try {
-            const savedBooks = localStorage.getItem('bookmaster_books');
-            const savedSales = localStorage.getItem('bookmaster_sales');
-            const savedNextId = localStorage.getItem('bookmaster_nextId');
-            
-            if (savedBooks && savedSales) {
-                books = JSON.parse(savedBooks);
-                salesHistory = JSON.parse(savedSales);
-                nextBookId = parseInt(savedNextId) || (books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1);
+                
+                // Process sales data
+                if (salesData) {
+                    salesHistory = Object.values(salesData);
+                    console.log('Loaded sales from Firebase:', salesHistory.length);
+                }
+                
+                // Process next ID
+                if (nextIdData) {
+                    nextBookId = nextIdData;
+                } else {
+                    nextBookId = books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1;
+                }
+                
+                // Check if we have data, if not initialize with sample
+                if (books.length === 0) {
+                    console.log('Initializing with sample data');
+                    await initializeSampleData();
+                } else {
+                    // Sync sales history with books (in case of missing entries)
+                    books.forEach(book => {
+                        const existingSale = salesHistory.find(s => s.bookId === book.id);
+                        if (!existingSale) {
+                            salesHistory.push({
+                                bookId: book.id,
+                                title: book.title,
+                                images: book.images,
+                                sold: book.sold || 0,
+                                stock: book.stock,
+                                initialStock: book.initialStock,
+                                revenue: (book.sold || 0) * book.price,
+                                lastSold: book.lastSold || null
+                            });
+                        }
+                    });
+                    
+                    // Save the synced data back to Firebase
+                    const booksObj = {};
+                    books.forEach(book => {
+                        booksObj[book.id] = book;
+                    });
+                    
+                    const salesObj = {};
+                    salesHistory.forEach(sale => {
+                        salesObj[sale.bookId] = sale;
+                    });
+                    
+                    await database.ref('books').set(booksObj);
+                    await database.ref('sales').set(salesObj);
+                }
+                
+                // Also update localStorage with Firebase data
+                localStorage.setItem('bookmaster_books', JSON.stringify(books));
+                localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+                localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+                
+                // Render books
                 renderBooks(books);
                 hideLoading();
-                showSuccess('მონაცემები ჩაიტვირთა ლოკალურად');
-            } else {
-                await initializeSampleData();
+                showSuccess('მონაცემები წარმატებით ჩაიტვირთა!');
+                
+            } catch (error) {
+                console.error('Error loading from Firebase:', error);
+                
+                // Try loading from localStorage as fallback
+                try {
+                    const savedBooks = localStorage.getItem('bookmaster_books');
+                    const savedSales = localStorage.getItem('bookmaster_sales');
+                    const savedNextId = localStorage.getItem('bookmaster_nextId');
+                    
+                    if (savedBooks && savedSales) {
+                        books = JSON.parse(savedBooks);
+                        salesHistory = JSON.parse(savedSales);
+                        nextBookId = parseInt(savedNextId) || (books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1);
+                        renderBooks(books);
+                        hideLoading();
+                        showSuccess('მონაცემები ჩაიტვირთა ლოკალურად');
+                    } else {
+                        await initializeSampleData();
+                    }
+                } catch (localError) {
+                    console.error('Error loading from localStorage:', localError);
+                    await initializeSampleData();
+                }
             }
-        } catch (localError) {
-            console.error('Error loading from localStorage:', localError);
-            await initializeSampleData();
         }
-    }
-}
         
-        // Save data to Firebase and localStorage with better error handling
-async function saveData() {
-    try {
-        console.log('Saving data...');
-        
-        // Convert arrays to objects for Firebase
-        const booksObj = {};
-        books.forEach(book => {
-            booksObj[book.id] = book;
-        });
-        
-        const salesObj = {};
-        salesHistory.forEach(sale => {
-            salesObj[sale.bookId] = sale;
-        });
-        
-        // Save to Firebase
-        await database.ref('books').set(booksObj);
-        await database.ref('sales').set(salesObj);
-        await database.ref('nextBookId').set(nextBookId);
-        
-        console.log('Data saved to Firebase successfully');
-        
-        // Also save to localStorage as backup
-        localStorage.setItem('bookmaster_books', JSON.stringify(books));
-        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-        localStorage.setItem('bookmaster_nextId', nextBookId.toString());
-        
-        console.log('Data saved to localStorage successfully');
-        
-        return true;
-        
-    } catch (error) {
-        console.error('Error saving to Firebase:', error);
-        
-        try {
-            // Fallback to localStorage only
-            localStorage.setItem('bookmaster_books', JSON.stringify(books));
-            localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-            localStorage.setItem('bookmaster_nextId', nextBookId.toString());
-            
-            console.log('Data saved to localStorage only');
-            showWarning('მონაცემები შენახულია მხოლოდ ლოკალურად');
-            return true;
-        } catch (localError) {
-            console.error('Error saving to localStorage:', localError);
-            showError('მონაცემების შენახვა ვერ მოხერხდა');
-            return false;
+        // Load from localStorage
+        function loadFromLocalStorage() {
+            try {
+                const savedBooks = localStorage.getItem('bookmaster_books');
+                const savedSales = localStorage.getItem('bookmaster_sales');
+                const savedNextId = localStorage.getItem('bookmaster_nextId');
+                
+                if (savedBooks && savedSales) {
+                    books = JSON.parse(savedBooks);
+                    salesHistory = JSON.parse(savedSales);
+                    nextBookId = parseInt(savedNextId) || (books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1);
+                    renderBooks(books);
+                    showSuccess('მონაცემები ჩაიტვირთა ლოკალურად');
+                } else {
+                    // Initialize with sample data
+                    initializeSampleData();
+                }
+                
+                // Setup event listeners
+                setupEventListeners();
+                
+                // Check if user is already logged in
+                const savedUser = localStorage.getItem('bookmaster_user');
+                if (savedUser) {
+                    currentUser = savedUser;
+                    loginPage.style.display = 'none';
+                    mainPage.style.display = 'block';
+                }
+                
+            } catch (error) {
+                console.error('Error loading from localStorage:', error);
+                initializeSampleData();
+            }
         }
-    }
-}
         
         // Initialize with sample data
         async function initializeSampleData() {
@@ -2494,6 +2624,58 @@ async function saveData() {
             // Save initial data
             await saveData();
             renderBooks(books);
+        }
+        
+        // Save data to Firebase and localStorage
+        async function saveData() {
+            try {
+                console.log('Saving data...');
+                
+                // Convert arrays to objects for Firebase
+                const booksObj = {};
+                books.forEach(book => {
+                    booksObj[book.id] = book;
+                });
+                
+                const salesObj = {};
+                salesHistory.forEach(sale => {
+                    salesObj[sale.bookId] = sale;
+                });
+                
+                // Save to Firebase
+                await database.ref('books').set(booksObj);
+                await database.ref('sales').set(salesObj);
+                await database.ref('nextBookId').set(nextBookId);
+                
+                console.log('Data saved to Firebase successfully');
+                
+                // Also save to localStorage as backup
+                localStorage.setItem('bookmaster_books', JSON.stringify(books));
+                localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+                localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+                
+                console.log('Data saved to localStorage successfully');
+                
+                return true;
+                
+            } catch (error) {
+                console.error('Error saving to Firebase:', error);
+                
+                try {
+                    // Fallback to localStorage only
+                    localStorage.setItem('bookmaster_books', JSON.stringify(books));
+                    localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+                    localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+                    
+                    console.log('Data saved to localStorage only');
+                    showWarning('მონაცემები შენახულია მხოლოდ ლოკალურად');
+                    return true;
+                } catch (localError) {
+                    console.error('Error saving to localStorage:', localError);
+                    showError('მონაცემების შენახვა ვერ მოხერხდა');
+                    return false;
+                }
+            }
         }
         
         // Handle login
@@ -2578,16 +2760,22 @@ async function saveData() {
                                 <div class="book-stock">მარაგში: ${book.stock}</div>
                                 <div class="book-price">${book.price} ₾</div>
                             </div>
-                            <button class="sell-btn" ${book.stock <= 0 ? 'disabled' : ''}>
-                                ${book.stock <= 0 ? 'მარაგი ამოიწურა' : 'გაყიდვა'}
-                            </button>
+                            <div class="book-actions">
+                                <button class="edit-btn">
+                                    <i class="fas fa-edit"></i> რედაქტირება
+                                </button>
+                                <button class="sell-btn" ${book.stock <= 0 ? 'disabled' : ''}>
+                                    ${book.stock <= 0 ? 'მარაგი ამოიწურა' : 'გაყიდვა'}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
                 
                 // Add event listeners
                 bookCard.addEventListener('click', (e) => {
-                    if (!e.target.classList.contains('sell-btn')) {
+                    if (!e.target.classList.contains('sell-btn') && !e.target.classList.contains('edit-btn') && 
+                        e.target.tagName !== 'I') {
                         openBookDetails(book.id);
                     }
                 });
@@ -2598,6 +2786,12 @@ async function saveData() {
                     if (book.stock > 0) {
                         sellBook(book.id);
                     }
+                });
+                
+                const editBtn = bookCard.querySelector('.edit-btn');
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openEditBook(book.id);
                 });
                 
                 booksGrid.appendChild(bookCard);
@@ -2622,97 +2816,152 @@ async function saveData() {
             renderBooks(filteredBooks);
         }
         
-// Open book details
-// Open book details
-function openBookDetails(bookId) {
-    const book = books.find(b => b.id === bookId);
-    if (!book) return;
-    
-    currentBookId = bookId;
-    
-    const soldCount = book.sold || 0;
-    const revenue = soldCount * book.price;
-    
-    const detailsContent = document.getElementById('bookDetailsContent');
-    detailsContent.innerHTML = `
-        <div class="book-details-images">
-            <img src="${book.images[0]}" alt="${book.title}" class="book-details-main-image" id="mainBookImage" style="cursor: pointer;">
-            <div class="book-details-thumbnails">
-                ${book.images.map((img, index) => `
-                    <img src="${img}" alt="${book.title} - სურათი ${index+1}" 
-                         class="book-thumbnail ${index === 0 ? 'active' : ''}" 
-                         data-index="${index}"
-                         style="cursor: pointer;">
-                `).join('')}
-            </div>
-        </div>
-        <div class="book-details-info">
-            <h2 class="book-details-title">${book.title}</h2>
-            <p class="book-details-description">${book.description}</p>
+        // Open book details
+        function openBookDetails(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (!book) return;
             
-            <div class="book-details-stats">
-                <div class="details-stat">
-                    <div class="details-stat-label">მარაგში</div>
-                    <div class="details-stat-value">${book.stock}</div>
-                </div>
-                <div class="details-stat">
-                    <div class="details-stat-label">გაყიდული</div>
-                    <div class="details-stat-value">${soldCount}</div>
-                </div>
-                <div class="details-stat">
-                    <div class="details-stat-label">ფასი</div>
-                    <div class="details-stat-value">${book.price} ₾</div>
-                </div>
-                <div class="details-stat">
-                    <div class="details-stat-label">შემოსავალი ამ წიგნიდან</div>
-                    <div class="details-stat-value income">${revenue} ₾</div>
-                </div>
-            </div>
+            currentBookId = bookId;
             
-            <div style="margin-top: 20px;">
-                <button class="btn-secondary" id="updateStockBtn">
-                    <i class="fas fa-boxes"></i> მარაგის განახლება
-                </button>
-            </div>
-        </div>
-    `;
-    
-    // Add event listeners to thumbnails
-    const thumbnails = detailsContent.querySelectorAll('.book-thumbnail');
-    const mainImage = document.getElementById('mainBookImage');
-    
-    thumbnails.forEach(thumb => {
-        thumb.addEventListener('click', () => {
-            thumbnails.forEach(t => t.classList.remove('active'));
-            thumb.classList.add('active');
-            mainImage.src = thumb.src;
-        });
-        
-        // Click to open image in new tab
-        thumb.addEventListener('dblclick', () => {
-            window.open(thumb.src, '_blank');
-        });
-    });
-    
-    // Click main image to open in new tab
-    mainImage.addEventListener('click', () => {
-        window.open(mainImage.src, '_blank');
-    });
-    
-    // Update stock button
-    const updateStockBtn = detailsContent.querySelector('#updateStockBtn');
-    updateStockBtn.addEventListener('click', () => {
-        const book = books.find(b => b.id === currentBookId);
-        if (book) {
-            document.getElementById('currentStock').value = book.stock;
-            document.getElementById('newStock').value = book.stock;
-            updateStockModal.style.display = 'flex';
-            bookDetailsModal.style.display = 'none';
+            const soldCount = book.sold || 0;
+            const revenue = soldCount * book.price;
+            
+            const detailsContent = document.getElementById('bookDetailsContent');
+            detailsContent.innerHTML = `
+                <div class="book-details-images">
+                    <img src="${book.images[0]}" alt="${book.title}" class="book-details-main-image" id="mainBookImage" style="cursor: pointer;">
+                    <div class="book-details-thumbnails">
+                        ${book.images.map((img, index) => `
+                            <img src="${img}" alt="${book.title} - სურათი ${index+1}" 
+                                 class="book-thumbnail ${index === 0 ? 'active' : ''}" 
+                                 data-index="${index}"
+                                 style="cursor: pointer;">
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="book-details-info">
+                    <h2 class="book-details-title">${book.title}</h2>
+                    <p class="book-details-description">${book.description}</p>
+                    
+                    <div class="book-details-stats">
+                        <div class="details-stat">
+                            <div class="details-stat-label">მარაგში</div>
+                            <div class="details-stat-value">${book.stock}</div>
+                        </div>
+                        <div class="details-stat">
+                            <div class="details-stat-label">გაყიდული</div>
+                            <div class="details-stat-value">${soldCount}</div>
+                        </div>
+                        <div class="details-stat">
+                            <div class="details-stat-label">ფასი</div>
+                            <div class="details-stat-value">${book.price} ₾</div>
+                        </div>
+                        <div class="details-stat">
+                            <div class="details-stat-label">შემოსავალი ამ წიგნიდან</div>
+                            <div class="details-stat-value income">${revenue} ₾</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button class="btn-edit" id="editBookFromDetailsBtn">
+                            <i class="fas fa-edit"></i> რედაქტირება
+                        </button>
+                        <button class="btn-secondary" id="updateStockBtn">
+                            <i class="fas fa-boxes"></i> მარაგის განახლება
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners to thumbnails
+            const thumbnails = detailsContent.querySelectorAll('.book-thumbnail');
+            const mainImage = document.getElementById('mainBookImage');
+            
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    thumb.classList.add('active');
+                    mainImage.src = thumb.src;
+                });
+                
+                // Click to open image in new tab
+                thumb.addEventListener('dblclick', () => {
+                    window.open(thumb.src, '_blank');
+                });
+            });
+            
+            // Click main image to open in new tab
+            mainImage.addEventListener('click', () => {
+                window.open(mainImage.src, '_blank');
+            });
+            
+            // Update stock button
+            const updateStockBtn = detailsContent.querySelector('#updateStockBtn');
+            updateStockBtn.addEventListener('click', () => {
+                const book = books.find(b => b.id === currentBookId);
+                if (book) {
+                    document.getElementById('currentStock').value = book.stock;
+                    document.getElementById('newStock').value = book.stock;
+                    updateStockModal.style.display = 'flex';
+                    bookDetailsModal.style.display = 'none';
+                }
+            });
+            
+            // Edit button in details
+            const editBookFromDetailsBtn = detailsContent.querySelector('#editBookFromDetailsBtn');
+            editBookFromDetailsBtn.addEventListener('click', () => {
+                bookDetailsModal.style.display = 'none';
+                openEditBook(bookId);
+            });
+            
+            bookDetailsModal.style.display = 'flex';
         }
-    });
-    
-    bookDetailsModal.style.display = 'flex';
-}
+        
+        // Open edit book modal
+        function openEditBook(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (!book) return;
+            
+            editingBookId = bookId;
+            
+            // Populate form with existing data
+            document.getElementById('editBookTitle').value = book.title;
+            document.getElementById('editBookStock').value = book.stock;
+            document.getElementById('editBookPrice').value = book.price;
+            
+            // Set color selection
+            const color = book.color || book.description.match(/ფერი:\s*(\w+)/)?.[1] || '';
+            if (['წითელი', 'ლურჯი', 'მწვანე', 'ყვითელი', 'შავი', 'თეთრი', 'ყავისფერი', 'ნაცრისფერი', 'ნარინჯისფერი', 'იასამნისფერი', 'ვარდისფერი'].includes(color)) {
+                editBookColorSelect.value = color;
+                editCustomColorContainer.classList.remove('show');
+            } else if (color) {
+                editBookColorSelect.value = 'other';
+                editCustomColorContainer.classList.add('show');
+                editCustomColorInput.value = color;
+            } else {
+                editBookColorSelect.value = '';
+                editCustomColorContainer.classList.remove('show');
+            }
+            
+            // Set description (remove color if it's in description)
+            let description = book.description;
+            if (description.includes('ფერი:')) {
+                description = description.replace(/ფერი:\s*\w+/, '').replace(/\.\s*$/, '');
+            }
+            document.getElementById('editBookDescription').value = description.trim();
+            
+            // Set images
+            editSelectedImages = [...book.images];
+            editImagePreview.innerHTML = '';
+            editSelectedImages.forEach((src, index) => {
+                createEditImagePreview(src, index);
+            });
+            
+            editImageError.style.display = editSelectedImages.length === 0 ? 'block' : 'none';
+            
+            // Show modal
+            editBookModal.style.display = 'flex';
+        }
         
         // Handle sell book
         async function sellBook(bookId) {
@@ -2827,132 +3076,133 @@ function openBookDetails(bookId) {
             }
         }
         
-  async function handleAddBook(e) {
-    e.preventDefault();
-    
-    const title = document.getElementById('bookTitle').value.trim();
-    const stock = parseInt(document.getElementById('bookStock').value);
-    const price = parseInt(document.getElementById('bookPrice').value);
-    const description = document.getElementById('bookDescription').value.trim();
-    const color = bookColorSelect.value === 'other' ? customColorInput.value.trim() : bookColorSelect.value;
-    
-    // Validate required fields
-    if (!title || isNaN(stock) || stock < 1 || isNaN(price) || price < 1) {
-        showError('გთხოვთ შეავსოთ სავალდებულო ველები სწორად');
-        return;
-    }
-    
-    if (!color) {
-        showError('გთხოვთ აირჩიოთ წიგნის ფერი');
-        return;
-    }
-    
-    if (!description) {
-        showError('გთხოვთ შეავსოთ აღწერის ველი');
-        return;
-    }
-    
-    // Validate image
-    if (selectedImages.length === 0) {
-        imageError.style.display = 'block';
-        showError('გთხოვთ ატვირთოთ მინიმუმ ერთი ფოტო');
-        return;
-    }
-    
-    imageError.style.display = 'none';
-    
-    // Disable submit button to prevent multiple submissions
-    submitBookBtn.disabled = true;
-    submitBookBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> დამატება...';
-    
-    showLoading('წიგნის დამატება...');
-    
-    try {
-        // Create new book with color in description
-        const descriptionWithColor = description.includes('ფერი:') ? 
-            description : `${description}. ფერი: ${color}`;
+        // Handle add book
+        async function handleAddBook(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('bookTitle').value.trim();
+            const stock = parseInt(document.getElementById('bookStock').value);
+            const price = parseInt(document.getElementById('bookPrice').value);
+            const description = document.getElementById('bookDescription').value.trim();
+            const color = bookColorSelect.value === 'other' ? customColorInput.value.trim() : bookColorSelect.value;
+            
+            // Validate required fields
+            if (!title || isNaN(stock) || stock < 1 || isNaN(price) || price < 1) {
+                showError('გთხოვთ შეავსოთ სავალდებულო ველები სწორად');
+                return;
+            }
+            
+            if (!color) {
+                showError('გთხოვთ აირჩიოთ წიგნის ფერი');
+                return;
+            }
+            
+            if (!description) {
+                showError('გთხოვთ შეავსოთ აღწერის ველი');
+                return;
+            }
+            
+            // Validate image
+            if (selectedImages.length === 0) {
+                imageError.style.display = 'block';
+                showError('გთხოვთ ატვირთოთ მინიმუმ ერთი ფოტო');
+                return;
+            }
+            
+            imageError.style.display = 'none';
+            
+            // Disable submit button to prevent multiple submissions
+            submitBookBtn.disabled = true;
+            submitBookBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> დამატება...';
+            
+            showLoading('წიგნის დამატება...');
+            
+            try {
+                // Create new book with color in description
+                const descriptionWithColor = description.includes('ფერი:') ? 
+                    description : `${description}. ფერი: ${color}`;
+                
+                const newBook = {
+                    id: nextBookId,
+                    title,
+                    color: color,
+                    description: descriptionWithColor,
+                    stock,
+                    initialStock: stock,
+                    price,
+                    images: selectedImages,
+                    sold: 0,
+                    lastSold: null
+                };
+                
+                // Add to books array
+                books.push(newBook);
+                
+                // Add to sales history
+                const newSale = {
+                    bookId: nextBookId,
+                    title: title,
+                    images: selectedImages,
+                    sold: 0,
+                    stock: stock,
+                    initialStock: stock,
+                    revenue: 0,
+                    lastSold: null
+                };
+                salesHistory.push(newSale);
+                
+                // Save to Firebase - DIRECT SAVE
+                const booksObj = {};
+                books.forEach(book => {
+                    booksObj[book.id] = book;
+                });
+                
+                const salesObj = {};
+                salesHistory.forEach(sale => {
+                    salesObj[sale.bookId] = sale;
+                });
+                
+                // Save to Firebase
+                await database.ref('books').set(booksObj);
+                await database.ref('sales').set(salesObj);
+                await database.ref('nextBookId').set(nextBookId + 1);
+                
+                // Save to localStorage
+                localStorage.setItem('bookmaster_books', JSON.stringify(books));
+                localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+                localStorage.setItem('bookmaster_nextId', (nextBookId + 1).toString());
+                
+                // Update nextBookId
+                nextBookId = nextBookId + 1;
+                
+                // Update UI
+                renderBooks(books);
+                
+                // Close modal and reset form
+                addBookModal.style.display = 'none';
+                addBookForm.reset();
+                bookColorSelect.value = '';
+                customColorContainer.classList.remove('show');
+                customColorInput.value = '';
+                document.getElementById('bookPrice').value = DEFAULT_BOOK_PRICE;
+                selectedImages = [];
+                imagePreview.innerHTML = '';
+                
+                hideLoading();
+                showSuccess(`"${title}" წარმატებით დაემატა!`);
+                
+            } catch (error) {
+                console.error('Error adding book:', error);
+                hideLoading();
+                showError('წიგნის დამატება ვერ მოხერხდა');
+            } finally {
+                // Re-enable submit button
+                submitBookBtn.disabled = false;
+                submitBookBtn.innerHTML = '<i class="fas fa-save"></i> წიგნის დამატება';
+            }
+        }
         
-        const newBook = {
-            id: nextBookId,
-            title,
-            color: color,
-            description: descriptionWithColor,
-            stock,
-            initialStock: stock,
-            price,
-            images: selectedImages,
-            sold: 0,
-            lastSold: null
-        };
-        
-        // Add to books array
-        books.push(newBook);
-        
-        // Add to sales history
-        const newSale = {
-            bookId: nextBookId,
-            title: title,
-            images: selectedImages,
-            sold: 0,
-            stock: stock,
-            initialStock: stock,
-            revenue: 0,
-            lastSold: null
-        };
-        salesHistory.push(newSale);
-        
-        // Save to Firebase - DIRECT SAVE
-        const booksObj = {};
-        books.forEach(book => {
-            booksObj[book.id] = book;
-        });
-        
-        const salesObj = {};
-        salesHistory.forEach(sale => {
-            salesObj[sale.bookId] = sale;
-        });
-        
-        // Save to Firebase
-        await database.ref('books').set(booksObj);
-        await database.ref('sales').set(salesObj);
-        await database.ref('nextBookId').set(nextBookId + 1);
-        
-        // Save to localStorage
-        localStorage.setItem('bookmaster_books', JSON.stringify(books));
-        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-        localStorage.setItem('bookmaster_nextId', (nextBookId + 1).toString());
-        
-        // Update nextBookId
-        nextBookId = nextBookId + 1;
-        
-        // Update UI
-        renderBooks(books);
-        
-        // Close modal and reset form
-        addBookModal.style.display = 'none';
-        addBookForm.reset();
-        bookColorSelect.value = '';
-        customColorContainer.classList.remove('show');
-        customColorInput.value = '';
-        document.getElementById('bookPrice').value = DEFAULT_BOOK_PRICE;
-        selectedImages = [];
-        imagePreview.innerHTML = '';
-        
-        hideLoading();
-        showSuccess(`"${title}" წარმატებით დაემატა!`);
-        
-    } catch (error) {
-        console.error('Error adding book:', error);
-        hideLoading();
-        showError('წიგნის დამატება ვერ მოხერხდა');
-    } finally {
-        // Re-enable submit button
-        submitBookBtn.disabled = false;
-        submitBookBtn.innerHTML = '<i class="fas fa-save"></i> წიგნის დამატება';
-    }
-}
-        
-        // Handle image upload with HEIC support
+        // Handle image upload
         function handleImageUpload(files) {
             const fileList = Array.from(files);
             
@@ -2999,6 +3249,48 @@ function openBookDetails(bookId) {
             });
         }
         
+        // Handle edit image upload
+        function handleEditImageUpload(files) {
+            const fileList = Array.from(files);
+            
+            // Limit to 10 images
+            if (editSelectedImages.length + fileList.length > 10) {
+                showError('მაქსიმუმ 10 ფოტოს დამატება შეგიძლიათ');
+                return;
+            }
+            
+            let processedCount = 0;
+            
+            fileList.forEach(file => {
+                // Check file type
+                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/heic', 'image/heif'];
+                if (!validTypes.includes(file.type)) {
+                    showError(`ფაილის "${file.name}" ტიპი არ არის მხარდაჭერილი`);
+                    return;
+                }
+                
+                if (file.size > 5 * 1024 * 1024) {
+                    showError(`სურათი "${file.name}" აღემატება 5MB-ს`);
+                    return;
+                }
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    editSelectedImages.push(event.target.result);
+                    createEditImagePreview(event.target.result, editSelectedImages.length - 1);
+                    processedCount++;
+                    
+                    // Hide image error if we have at least one image
+                    if (editSelectedImages.length > 0) {
+                        editImageError.style.display = 'none';
+                    }
+                };
+                
+                reader.readAsDataURL(file);
+            });
+        }
+        
         // Create image preview
         function createImagePreview(src, index) {
             const container = document.createElement('div');
@@ -3034,6 +3326,41 @@ function openBookDetails(bookId) {
             imagePreview.appendChild(container);
         }
         
+        // Create edit image preview
+        function createEditImagePreview(src, index) {
+            const container = document.createElement('div');
+            container.style.position = 'relative';
+            container.style.display = 'inline-block';
+            
+            const img = document.createElement('img');
+            img.src = src;
+            img.className = 'preview-image';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-image';
+            removeBtn.innerHTML = '×';
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                editSelectedImages.splice(index, 1);
+                container.remove();
+                // Reindex remaining images
+                const previews = editImagePreview.querySelectorAll('div');
+                previews.forEach((preview, i) => {
+                    const btn = preview.querySelector('.remove-image');
+                    btn.dataset.index = i;
+                });
+                
+                // Show error if no images left
+                if (editSelectedImages.length === 0) {
+                    editImageError.style.display = 'block';
+                }
+            });
+            
+            container.appendChild(img);
+            container.appendChild(removeBtn);
+            editImagePreview.appendChild(container);
+        }
+        
         // Check form validity
         function checkFormValidity() {
             const title = document.getElementById('bookTitle').value.trim();
@@ -3050,7 +3377,7 @@ function openBookDetails(bookId) {
             const totalBooksCount = books.reduce((sum, book) => sum + book.stock, 0);
             const totalSoldCount = salesHistory.reduce((sum, sale) => sum + sale.sold, 0);
             const totalIncomeValue = salesHistory.reduce((sum, sale) => sum + sale.revenue, 0);
-const totalLeftCount = totalBooksCount; // This should be the current stock, not initial stock minus sold
+            const totalLeftCount = totalBooksCount;
 
             // Update UI
             totalBooks.textContent = totalBooksCount;
@@ -3123,61 +3450,177 @@ const totalLeftCount = totalBooksCount; // This should be the current stock, not
             confirmationModal.style.display = 'flex';
         }
         
-async function handleConfirmDelete() {
-    if (!bookToDelete) return;
-    
-    confirmationModal.style.display = 'none';
-    showLoading('წიგნის წაშლა...');
-    
-    try {
-        const bookIndex = books.findIndex(b => b.id === bookToDelete);
-        if (bookIndex === -1) return;
-        
-        const bookTitle = books[bookIndex].title;
-        const bookId = books[bookIndex].id;
-        
-        // Remove from books array
-        books.splice(bookIndex, 1);
-        
-        // Remove from sales history array
-        const salesIndex = salesHistory.findIndex(s => s.bookId === bookToDelete);
-        if (salesIndex !== -1) {
-            salesHistory.splice(salesIndex, 1);
+        // Handle confirm delete
+        async function handleConfirmDelete() {
+            if (!bookToDelete) return;
+            
+            confirmationModal.style.display = 'none';
+            showLoading('წიგნის წაშლა...');
+            
+            try {
+                const bookIndex = books.findIndex(b => b.id === bookToDelete);
+                if (bookIndex === -1) return;
+                
+                const bookTitle = books[bookIndex].title;
+                const bookId = books[bookIndex].id;
+                
+                // Remove from books array
+                books.splice(bookIndex, 1);
+                
+                // Remove from sales history array
+                const salesIndex = salesHistory.findIndex(s => s.bookId === bookToDelete);
+                if (salesIndex !== -1) {
+                    salesHistory.splice(salesIndex, 1);
+                }
+                
+                // Save data to Firebase
+                const booksObj = {};
+                books.forEach(book => {
+                    booksObj[book.id] = book;
+                });
+                
+                const salesObj = {};
+                salesHistory.forEach(sale => {
+                    salesObj[sale.bookId] = sale;
+                });
+                
+                // Update Firebase
+                await database.ref('books').set(booksObj);
+                await database.ref('sales').set(salesObj);
+                
+                // Update localStorage
+                localStorage.setItem('bookmaster_books', JSON.stringify(books));
+                localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+                
+                // Update UI
+                renderBooks(books);
+                updateIncomeStats();
+                hideLoading();
+                showSuccess(`"${bookTitle}" წარმატებით წაიშალა!`);
+                
+            } catch (error) {
+                console.error('Error deleting book:', error);
+                hideLoading();
+                showError('წიგნის წაშლა ვერ მოხერხდა');
+            } finally {
+                bookToDelete = null;
+            }
         }
         
-        // Save data to Firebase - FIXED
-        const booksObj = {};
-        books.forEach(book => {
-            booksObj[book.id] = book;
-        });
-        
-        const salesObj = {};
-        salesHistory.forEach(sale => {
-            salesObj[sale.bookId] = sale;
-        });
-        
-        // Update Firebase
-        await database.ref('books').set(booksObj);
-        await database.ref('sales').set(salesObj);
-        
-        // Update localStorage
-        localStorage.setItem('bookmaster_books', JSON.stringify(books));
-        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-        
-        // Update UI
-        renderBooks(books);
-        updateIncomeStats();
-        hideLoading();
-        showSuccess(`"${bookTitle}" წარმატებით წაიშალა!`);
-        
-    } catch (error) {
-        console.error('Error deleting book:', error);
-        hideLoading();
-        showError('წიგნის წაშლა ვერ მოხერხდა');
-    } finally {
-        bookToDelete = null;
-    }
-}
+        // Handle update book
+        async function handleUpdateBook(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('editBookTitle').value.trim();
+            const stock = parseInt(document.getElementById('editBookStock').value);
+            const price = parseInt(document.getElementById('editBookPrice').value);
+            const description = document.getElementById('editBookDescription').value.trim();
+            const color = editBookColorSelect.value === 'other' ? editCustomColorInput.value.trim() : editBookColorSelect.value;
+            
+            // Validate required fields
+            if (!title || isNaN(stock) || stock < 1 || isNaN(price) || price < 1) {
+                showError('გთხოვთ შეავსოთ სავალდებულო ველები სწორად');
+                return;
+            }
+            
+            if (!color) {
+                showError('გთხოვთ აირჩიოთ წიგნის ფერი');
+                return;
+            }
+            
+            if (!description) {
+                showError('გთხოვთ შეავსოთ აღწერის ველი');
+                return;
+            }
+            
+            // Validate image
+            if (editSelectedImages.length === 0) {
+                editImageError.style.display = 'block';
+                showError('გთხოვთ ატვირთოთ მინიმუმ ერთი ფოტო');
+                return;
+            }
+            
+            editImageError.style.display = 'none';
+            
+            // Disable submit button to prevent multiple submissions
+            updateBookBtn.disabled = true;
+            updateBookBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> შენახვა...';
+            
+            showLoading('ცვლილებების შენახვა...');
+            
+            try {
+                const bookIndex = books.findIndex(b => b.id === editingBookId);
+                if (bookIndex === -1) {
+                    throw new Error('წიგნი ვერ მოიძებნა');
+                }
+                
+                // Update book description with color
+                const descriptionWithColor = description.includes('ფერი:') ? 
+                    description : `${description}. ფერი: ${color}`;
+                
+                // Update book
+                books[bookIndex] = {
+                    ...books[bookIndex],
+                    title,
+                    color: color,
+                    description: descriptionWithColor,
+                    stock,
+                    price,
+                    images: editSelectedImages
+                };
+                
+                // Update sales history
+                const salesIndex = salesHistory.findIndex(s => s.bookId === editingBookId);
+                if (salesIndex !== -1) {
+                    salesHistory[salesIndex] = {
+                        ...salesHistory[salesIndex],
+                        title,
+                        images: editSelectedImages,
+                        stock,
+                        price
+                    };
+                }
+                
+                // Save to Firebase
+                const booksObj = {};
+                books.forEach(book => {
+                    booksObj[book.id] = book;
+                });
+                
+                const salesObj = {};
+                salesHistory.forEach(sale => {
+                    salesObj[sale.bookId] = sale;
+                });
+                
+                // Update Firebase
+                await database.ref('books').set(booksObj);
+                await database.ref('sales').set(salesObj);
+                
+                // Update localStorage
+                localStorage.setItem('bookmaster_books', JSON.stringify(books));
+                localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+                
+                // Update UI
+                renderBooks(books);
+                
+                // Close modal
+                editBookModal.style.display = 'none';
+                editSelectedImages = [];
+                editImagePreview.innerHTML = '';
+                
+                hideLoading();
+                showSuccess(`"${title}" წარმატებით განახლდა!`);
+                
+            } catch (error) {
+                console.error('Error updating book:', error);
+                hideLoading();
+                showError('წიგნის განახლება ვერ მოხერხდა');
+            } finally {
+                // Re-enable submit button
+                updateBookBtn.disabled = false;
+                updateBookBtn.innerHTML = '<i class="fas fa-save"></i> ცვლილებების შენახვა';
+            }
+        }
         
         // Sort sales table
         function sortSalesTable(sortBy) {
