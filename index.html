@@ -1984,26 +1984,34 @@
         const confirmAction = document.getElementById('confirmAction');
         const imageError = document.getElementById('imageError');
         
-        // Initialize the app
-        async function initApp() {
-            // Show loading overlay
-            showLoading('აპლიკაციის ჩატვირთვა...');
-            
-            // Check if user is already logged in (from localStorage)
-            const savedUser = localStorage.getItem('bookmaster_user');
-            if (savedUser) {
-                currentUser = savedUser;
-                loginPage.style.display = 'none';
-                mainPage.style.display = 'block';
-                await loadData();
-            }
-            
-            // Setup event listeners
-            setupEventListeners();
-            
-            // Hide loading overlay
-            hideLoading();
+// Initialize the app
+async function initApp() {
+    // Show loading overlay
+    showLoading('აპლიკაციის ჩატვირთვა...');
+    
+    // Test Firebase connection first
+    const firebaseConnected = await testFirebaseConnection();
+    
+    if (!firebaseConnected) {
+        showWarning('Firebase კავშირი ვერ მოხერხდა. გამოიყენება ლოკალური მონაცემები.');
+        // Load from localStorage only
+        loadFromLocalStorage();
+    } else {
+        // Setup event listeners
+        setupEventListeners();
+        
+        // Check if user is already logged in
+        const savedUser = localStorage.getItem('bookmaster_user');
+        if (savedUser) {
+            currentUser = savedUser;
+            loginPage.style.display = 'none';
+            mainPage.style.display = 'block';
+            await loadData();
         }
+    }
+    
+    hideLoading();
+}
         
         // Add this function to test Firebase connection
 async function testFirebaseConnection() {
@@ -2029,34 +2037,6 @@ async function testFirebaseConnection() {
     }
 }
 
-// Then update your initApp function to test Firebase
-async function initApp() {
-    // Show loading overlay
-    showLoading('აპლიკაციის ჩატვირთვა...');
-    
-    // Test Firebase connection first
-    const firebaseConnected = await testFirebaseConnection();
-    
-    if (!firebaseConnected) {
-        showError('Firebase კავშირი ვერ მოხერხდა. გამოიყენება ლოკალური მონაცემები.');
-        // Load from localStorage only
-        loadFromLocalStorage();
-    } else {
-        // Setup event listeners
-        setupEventListeners();
-        
-        // Check if user is already logged in
-        const savedUser = localStorage.getItem('bookmaster_user');
-        if (savedUser) {
-            currentUser = savedUser;
-            loginPage.style.display = 'none';
-            mainPage.style.display = 'block';
-            await loadData();
-        }
-    }
-    
-    hideLoading();
-}
 
 // Update the saveData function to be more robust
 async function saveData() {
@@ -2643,6 +2623,7 @@ async function saveData() {
         }
         
 // Open book details
+// Open book details
 function openBookDetails(bookId) {
     const book = books.find(b => b.id === bookId);
     if (!book) return;
@@ -2732,33 +2713,6 @@ function openBookDetails(bookId) {
     
     bookDetailsModal.style.display = 'flex';
 }
-            
-            // Add event listeners to thumbnails
-            const thumbnails = detailsContent.querySelectorAll('.book-thumbnail');
-            const mainImage = document.getElementById('mainBookImage');
-            
-            thumbnails.forEach(thumb => {
-                thumb.addEventListener('click', () => {
-                    thumbnails.forEach(t => t.classList.remove('active'));
-                    thumb.classList.add('active');
-                    mainImage.src = thumb.src;
-                });
-            });
-            
-            // Update stock button
-            const updateStockBtn = detailsContent.querySelector('#updateStockBtn');
-            updateStockBtn.addEventListener('click', () => {
-                const book = books.find(b => b.id === currentBookId);
-                if (book) {
-                    document.getElementById('currentStock').value = book.stock;
-                    document.getElementById('newStock').value = book.stock;
-                    updateStockModal.style.display = 'flex';
-                    bookDetailsModal.style.display = 'none';
-                }
-            });
-            
-            bookDetailsModal.style.display = 'flex';
-        }
         
         // Handle sell book
         async function sellBook(bookId) {
