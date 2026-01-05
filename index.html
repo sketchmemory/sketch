@@ -1,3 +1,6 @@
+Here's the complete updated HTML with proper HEIC/HEIF support and reliable image upload functionality:
+
+```html
 <!DOCTYPE html>
 <html lang="ka">
 <head>
@@ -9,6 +12,8 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- HEIC conversion library -->
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
     <style>
         :root {
             --primary-color: #4361ee;
@@ -99,43 +104,43 @@
             animation: fadeInUp 0.8s ease-out;
         }
         
-        /* Add this to the CSS section */
-.image-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    cursor: pointer;
-}
+        /* Image Popup */
+        .image-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            cursor: pointer;
+        }
 
-.image-popup-content {
-    max-width: 90%;
-    max-height: 90%;
-    position: relative;
-}
+        .image-popup-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
 
-.image-popup-content img {
-    max-width: 100%;
-    max-height: 90vh;
-    object-fit: contain;
-}
+        .image-popup-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
 
-.close-popup {
-    position: absolute;
-    top: -40px;
-    right: 0;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 30px;
-    cursor: pointer;
-}
+        .close-popup {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
 
         @keyframes fadeInUp {
             from {
@@ -324,12 +329,12 @@
             color: white;
         }
         
-.content {
-    padding: 20px 2cm; /* Add 2cm left and right padding */
-    max-width: 1600px;
-    margin: 0 auto;
-    width: 100%;
-}
+        .content {
+            padding: 20px 2cm;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
         
         /* Actions Bar */
         .actions-bar {
@@ -1699,6 +1704,27 @@
             margin-top: 4px;
             font-style: italic;
         }
+        
+        /* Upload progress */
+        .upload-progress {
+            display: none;
+            margin-top: 10px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #e1e5ee;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -1849,17 +1875,18 @@
                     </div>
                     
                     <div class="form-group full-width">
-                        <label for="bookDescription" class="required-field">აღწერა</label>
-                        <textarea id="bookDescription" placeholder="წიგნის აღწერა..." required></textarea>
-                    </div>
-                    
-                    <div class="form-group full-width">
                         <label for="bookImages" class="required-field">ფოტოები</label>
                         <div class="image-upload-container" id="imageUploadArea">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <h3>ატვირთვა</h3>
-                            <p>PNG, JPG, GIF, HEIC ფორმატი, მაქსიმუმ 5MB. მინიმუმ 1 ფოტო</p>
-                            <input type="file" id="bookImages" accept="image/*,image/heic,image/heif" multiple style="display: none;" required>
+                            <p>PNG, JPG, JPEG, GIF, WEBP, HEIC, HEIF ფორმატი, მაქსიმუმ 5MB. მინიმუმ 1 ფოტო</p>
+                            <input type="file" id="bookImages" accept="image/*,.heic,.heif" multiple style="display: none;" required>
+                        </div>
+                        <div class="upload-progress" id="uploadProgress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div style="font-size: 12px; color: var(--gray-color); margin-top: 5px;" id="progressText">0%</div>
                         </div>
                         <div class="image-preview" id="imagePreview">
                             <!-- Image previews will be added here -->
@@ -1939,8 +1966,14 @@
                         <div class="image-upload-container" id="editImageUploadArea">
                             <i class="fas fa-cloud-upload-alt"></i>
                             <h3>ატვირთვა</h3>
-                            <p>PNG, JPG, GIF, HEIC ფორმატი, მაქსიმუმ 5MB. მინიმუმ 1 ფოტო</p>
-                            <input type="file" id="editBookImages" accept="image/*,image/heic,image/heif" multiple style="display: none;">
+                            <p>PNG, JPG, JPEG, GIF, WEBP, HEIC, HEIF ფორმატი, მაქსიმუმ 5MB. მინიმუმ 1 ფოტო</p>
+                            <input type="file" id="editBookImages" accept="image/*,.heic,.heif" multiple style="display: none;">
+                        </div>
+                        <div class="upload-progress" id="editUploadProgress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="editProgressFill"></div>
+                            </div>
+                            <div style="font-size: 12px; color: var(--gray-color); margin-top: 5px;" id="editProgressText">0%</div>
                         </div>
                         <div class="image-preview" id="editImagePreview">
                             <!-- Image previews will be added here -->
@@ -2178,6 +2211,9 @@
         const cancelConfirm = document.getElementById('cancelConfirm');
         const confirmAction = document.getElementById('confirmAction');
         const imageError = document.getElementById('imageError');
+        const uploadProgress = document.getElementById('uploadProgress');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
         
         // Edit modal elements
         const editBookModal = document.getElementById('editBookModal');
@@ -2193,6 +2229,10 @@
         const editCustomColorInput = document.getElementById('editCustomColor');
         const updateBookBtn = document.getElementById('updateBookBtn');
         const deleteImagesBtn = document.getElementById('deleteImagesBtn');
+        const editUploadProgress = document.getElementById('editUploadProgress');
+        const editProgressFill = document.getElementById('editProgressFill');
+        const editProgressText = document.getElementById('editProgress
+        const editProgressText = document.getElementById('editProgressText');
         
         // Initialize the app
         async function initApp() {
@@ -2291,6 +2331,7 @@
                 customColorInput.value = '';
                 document.getElementById('bookPrice').value = DEFAULT_BOOK_PRICE;
                 imageError.style.display = 'none';
+                uploadProgress.style.display = 'none';
             });
             
             closeAddModal.addEventListener('click', () => {
@@ -2443,26 +2484,26 @@
             });
             
             // Delete all images button
-deleteImagesBtn.addEventListener('click', () => {
-    // Show confirmation popup
-    confirmationTitle.textContent = 'ფოტოების წაშლა';
-    confirmationMessage.textContent = 'დარწმუნებული ხართ, რომ გსურთ ყველა ფოტოს წაშლა?';
-    confirmAction.textContent = 'დიახ, წაშლა';
-    
-    // Set up confirmation action
-    const handleDeleteConfirm = () => {
-        editSelectedImages = [];
-        editImagePreview.innerHTML = '';
-        editImageError.style.display = 'block';
-        confirmationModal.style.display = 'none';
-        
-        // Remove event listener to prevent multiple bindings
-        confirmAction.removeEventListener('click', handleDeleteConfirm);
-    };
-    
-    confirmAction.addEventListener('click', handleDeleteConfirm);
-    confirmationModal.style.display = 'flex';
-});
+            deleteImagesBtn.addEventListener('click', () => {
+                // Show confirmation popup
+                confirmationTitle.textContent = 'ფოტოების წაშლა';
+                confirmationMessage.textContent = 'დარწმუნებული ხართ, რომ გსურთ ყველა ფოტოს წაშლა?';
+                confirmAction.textContent = 'დიახ, წაშლა';
+                
+                // Set up confirmation action
+                const handleDeleteConfirm = () => {
+                    editSelectedImages = [];
+                    editImagePreview.innerHTML = '';
+                    editImageError.style.display = 'block';
+                    confirmationModal.style.display = 'none';
+                    
+                    // Remove event listener to prevent multiple bindings
+                    confirmAction.removeEventListener('click', handleDeleteConfirm);
+                };
+                
+                confirmAction.addEventListener('click', handleDeleteConfirm);
+                confirmationModal.style.display = 'flex';
+            });
         }
         
         // Load data from Firebase or localStorage
@@ -2618,16 +2659,16 @@ deleteImagesBtn.addEventListener('click', () => {
             }
         }
         
-// Initialize with empty data
-async function initializeSampleData() {
-    books = []; // Empty array - no default books
-    salesHistory = [];
-    nextBookId = 1;
-    
-    // Save initial data
-    await saveData();
-    renderBooks(books);
-}
+        // Initialize with empty data
+        async function initializeSampleData() {
+            books = []; // Empty array - no default books
+            salesHistory = [];
+            nextBookId = 1;
+            
+            // Save initial data
+            await saveData();
+            renderBooks(books);
+        }
         
         // Save data to Firebase and localStorage
         async function saveData() {
@@ -2750,25 +2791,25 @@ async function initializeSampleData() {
                 
                 const soldCount = book.sold || 0;
                 
-bookCard.innerHTML = `
-    <div class="book-image-container">
-        <img src="${book.images[0]}" alt="${book.title}" class="book-image">
-        ${soldCount > 5 ? `<div class="book-badge">პოპულარული</div>` : ''}
-    </div>
-    <div class="book-info">
-        <h3 class="book-title">${book.title}</h3>
-        <p class="book-description">${book.description}</p>
-        <div class="book-footer">
-            <div>
-                <div class="book-stock">მარაგში: ${book.stock}</div>
-                <div class="book-price">${book.price} ₾</div>
-            </div>
-            <button class="sell-btn" ${book.stock <= 0 ? 'disabled' : ''}>
-                ${book.stock <= 0 ? 'მარაგი ამოიწურა' : 'გაყიდვა'}
-            </button>
-        </div>
-    </div>
-`;
+                bookCard.innerHTML = `
+                    <div class="book-image-container">
+                        <img src="${book.images[0]}" alt="${book.title}" class="book-image">
+                        ${soldCount > 5 ? `<div class="book-badge">პოპულარული</div>` : ''}
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title">${book.title}</h3>
+                        <p class="book-description">${book.description}</p>
+                        <div class="book-footer">
+                            <div>
+                                <div class="book-stock">მარაგში: ${book.stock}</div>
+                                <div class="book-price">${book.price} ₾</div>
+                            </div>
+                            <button class="sell-btn" ${book.stock <= 0 ? 'disabled' : ''}>
+                                ${book.stock <= 0 ? 'მარაგი ამოიწურა' : 'გაყიდვა'}
+                            </button>
+                        </div>
+                    </div>
+                `;
                 
                 // Add event listeners
                 bookCard.addEventListener('click', (e) => {
@@ -2785,7 +2826,6 @@ bookCard.innerHTML = `
                         sellBook(book.id);
                     }
                 });
-                
                 
                 booksGrid.appendChild(bookCard);
             });
@@ -2810,163 +2850,163 @@ bookCard.innerHTML = `
         }
         
         // Open book details
-function openBookDetails(bookId) {
-    const book = books.find(b => b.id === bookId);
-    if (!book) return;
-    
-    currentBookId = bookId;
-    
-    const soldCount = book.sold || 0;
-    const revenue = soldCount * book.price;
-    
-    const detailsContent = document.getElementById('bookDetailsContent');
-    detailsContent.innerHTML = `
-        <div class="book-details-images">
-            <img src="${book.images[0]}" alt="${book.title}" class="book-details-main-image" id="mainBookImage" style="cursor: pointer;">
-            <div class="book-details-thumbnails">
-                ${book.images.map((img, index) => `
-                    <img src="${img}" alt="${book.title} - სურათი ${index+1}" 
-                         class="book-thumbnail ${index === 0 ? 'active' : ''}" 
-                         data-index="${index}"
-                         style="cursor: pointer;">
-                `).join('')}
-            </div>
-        </div>
-        <div class="book-details-info">
-            <h2 class="book-details-title">${book.title}</h2>
-            <p class="book-details-description">${book.description}</p>
+        function openBookDetails(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (!book) return;
             
-            <div class="book-details-stats">
-                <div class="details-stat">
-                    <div class="details-stat-label">მარაგში</div>
-                    <div class="details-stat-value">${book.stock}</div>
-                </div>
-                <div class="details-stat">
-                    <div class="details-stat-label">გაყიდული</div>
-                    <div class="details-stat-value">${soldCount}</div>
-                </div>
-                <div class="details-stat">
-                    <div class="details-stat-label">ფასი</div>
-                    <div class="details-stat-value">${book.price} ₾</div>
-                </div>
-                <div class="details-stat">
-                    <div class="details-stat-label">შემოსავალი ამ წიგნიდან</div>
-                    <div class="details-stat-value income">${revenue} ₾</div>
-                </div>
-            </div>
+            currentBookId = bookId;
             
-            <div style="margin-top: 20px; display: flex; gap: 10px;">
-                <button class="btn-edit" id="editBookFromDetailsBtn">
-                    <i class="fas fa-edit"></i> რედაქტირება
-                </button>
-                <button class="btn-secondary" id="updateStockBtn">
-                    <i class="fas fa-boxes"></i> მარაგის განახლება
-                </button>
-            </div>
-        </div>
-    `;
-    
-    // Add event listeners to thumbnails
-    const thumbnails = detailsContent.querySelectorAll('.book-thumbnail');
-    const mainImage = document.getElementById('mainBookImage');
-    
-    thumbnails.forEach(thumb => {
-        thumb.addEventListener('click', () => {
-            thumbnails.forEach(t => t.classList.remove('active'));
-            thumb.classList.add('active');
-            mainImage.src = thumb.src;
+            const soldCount = book.sold || 0;
+            const revenue = soldCount * book.price;
             
-            // Open popup on click
-            createImagePopup(thumb.src);
-        });
-    });
-    
-    // Click main image to open popup
-    mainImage.addEventListener('click', () => {
-        createImagePopup(mainImage.src);
-    });
-    
-    // Function to create image popup
-    function createImagePopup(src) {
-        const popup = document.createElement('div');
-        popup.className = 'image-popup';
-        popup.innerHTML = `
-            <div class="image-popup-content">
-                <button class="close-popup">&times;</button>
-                <img src="${src}" alt="Full size image">
-            </div>
-        `;
-        
-        popup.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            cursor: pointer;
-        `;
-        
-        const content = popup.querySelector('.image-popup-content');
-        content.style.cssText = `
-            max-width: 90%;
-            max-height: 90%;
-            position: relative;
-        `;
-        
-        const img = popup.querySelector('img');
-        img.style.cssText = `
-            max-width: 100%;
-            max-height: 90vh;
-            object-fit: contain;
-        `;
-        
-        const closeBtn = popup.querySelector('.close-popup');
-        closeBtn.style.cssText = `
-            position: absolute;
-            top: -40px;
-            right: 0;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 30px;
-            cursor: pointer;
-        `;
-        
-        popup.addEventListener('click', (e) => {
-            if (e.target === popup || e.target === closeBtn) {
-                document.body.removeChild(popup);
+            const detailsContent = document.getElementById('bookDetailsContent');
+            detailsContent.innerHTML = `
+                <div class="book-details-images">
+                    <img src="${book.images[0]}" alt="${book.title}" class="book-details-main-image" id="mainBookImage" style="cursor: pointer;">
+                    <div class="book-details-thumbnails">
+                        ${book.images.map((img, index) => `
+                            <img src="${img}" alt="${book.title} - სურათი ${index+1}" 
+                                 class="book-thumbnail ${index === 0 ? 'active' : ''}" 
+                                 data-index="${index}"
+                                 style="cursor: pointer;">
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="book-details-info">
+                    <h2 class="book-details-title">${book.title}</h2>
+                    <p class="book-details-description">${book.description}</p>
+                    
+                    <div class="book-details-stats">
+                        <div class="details-stat">
+                            <div class="details-stat-label">მარაგში</div>
+                            <div class="details-stat-value">${book.stock}</div>
+                        </div>
+                        <div class="details-stat">
+                            <div class="details-stat-label">გაყიდული</div>
+                            <div class="details-stat-value">${soldCount}</div>
+                        </div>
+                        <div class="details-stat">
+                            <div class="details-stat-label">ფასი</div>
+                            <div class="details-stat-value">${book.price} ₾</div>
+                        </div>
+                        <div class="details-stat">
+                            <div class="details-stat-label">შემოსავალი ამ წიგნიდან</div>
+                            <div class="details-stat-value income">${revenue} ₾</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button class="btn-edit" id="editBookFromDetailsBtn">
+                            <i class="fas fa-edit"></i> რედაქტირება
+                        </button>
+                        <button class="btn-secondary" id="updateStockBtn">
+                            <i class="fas fa-boxes"></i> მარაგის განახლება
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners to thumbnails
+            const thumbnails = detailsContent.querySelectorAll('.book-thumbnail');
+            const mainImage = document.getElementById('mainBookImage');
+            
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    thumb.classList.add('active');
+                    mainImage.src = thumb.src;
+                    
+                    // Open popup on click
+                    createImagePopup(thumb.src);
+                });
+            });
+            
+            // Click main image to open popup
+            mainImage.addEventListener('click', () => {
+                createImagePopup(mainImage.src);
+            });
+            
+            // Function to create image popup
+            function createImagePopup(src) {
+                const popup = document.createElement('div');
+                popup.className = 'image-popup';
+                popup.innerHTML = `
+                    <div class="image-popup-content">
+                        <button class="close-popup">&times;</button>
+                        <img src="${src}" alt="Full size image">
+                    </div>
+                `;
+                
+                popup.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.9);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 2000;
+                    cursor: pointer;
+                `;
+                
+                const content = popup.querySelector('.image-popup-content');
+                content.style.cssText = `
+                    max-width: 90%;
+                    max-height: 90%;
+                    position: relative;
+                `;
+                
+                const img = popup.querySelector('img');
+                img.style.cssText = `
+                    max-width: 100%;
+                    max-height: 90vh;
+                    object-fit: contain;
+                `;
+                
+                const closeBtn = popup.querySelector('.close-popup');
+                closeBtn.style.cssText = `
+                    position: absolute;
+                    top: -40px;
+                    right: 0;
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 30px;
+                    cursor: pointer;
+                `;
+                
+                popup.addEventListener('click', (e) => {
+                    if (e.target === popup || e.target === closeBtn) {
+                        document.body.removeChild(popup);
+                    }
+                });
+                
+                document.body.appendChild(popup);
             }
-        });
-        
-        document.body.appendChild(popup);
-    }
-    
-    // Update stock button
-    const updateStockBtn = detailsContent.querySelector('#updateStockBtn');
-    updateStockBtn.addEventListener('click', () => {
-        const book = books.find(b => b.id === currentBookId);
-        if (book) {
-            document.getElementById('currentStock').value = book.stock;
-            document.getElementById('newStock').value = book.stock;
-            updateStockModal.style.display = 'flex';
-            bookDetailsModal.style.display = 'none';
+            
+            // Update stock button
+            const updateStockBtn = detailsContent.querySelector('#updateStockBtn');
+            updateStockBtn.addEventListener('click', () => {
+                const book = books.find(b => b.id === currentBookId);
+                if (book) {
+                    document.getElementById('currentStock').value = book.stock;
+                    document.getElementById('newStock').value = book.stock;
+                    updateStockModal.style.display = 'flex';
+                    bookDetailsModal.style.display = 'none';
+                }
+            });
+            
+            // Edit button in details
+            const editBookFromDetailsBtn = detailsContent.querySelector('#editBookFromDetailsBtn');
+            editBookFromDetailsBtn.addEventListener('click', () => {
+                bookDetailsModal.style.display = 'none';
+                openEditBook(bookId);
+            });
+            
+            bookDetailsModal.style.display = 'flex';
         }
-    });
-    
-    // Edit button in details
-    const editBookFromDetailsBtn = detailsContent.querySelector('#editBookFromDetailsBtn');
-    editBookFromDetailsBtn.addEventListener('click', () => {
-        bookDetailsModal.style.display = 'none';
-        openEditBook(bookId);
-    });
-    
-    bookDetailsModal.style.display = 'flex';
-}
         
         // Open edit book modal
         function openEditBook(bookId) {
@@ -3009,6 +3049,7 @@ function openBookDetails(bookId) {
             });
             
             editImageError.style.display = editSelectedImages.length === 0 ? 'block' : 'none';
+            editUploadProgress.style.display = 'none';
             
             // Show modal
             editBookModal.style.display = 'flex';
@@ -3242,19 +3283,18 @@ function openBookDetails(bookId) {
                 hideLoading();
                 showSuccess(`"${title}" წარმატებით დაემატა!`);
                 
-// After the try-catch block in handleAddBook(), add:
-} catch (error) {
-    console.error('Error adding book:', error);
-    hideLoading();
-    
-    // More specific error messages
-    if (error.message.includes('storage')) {
-        showError('ფოტოების ატვირთვა ვერ მოხერხდა. გთხოვთ სცადოთ სხვა სურათი.');
-    } else if (error.message.includes('permission') || error.code === 'PERMISSION_DENIED') {
-        showError('სისტემის შეცდომა. გთხოვთ სცადოთ მოგვიანებით.');
-    } else {
-        showError('წიგნის დამატება ვერ მოხერხდა');
-    }
+            } catch (error) {
+                console.error('Error adding book:', error);
+                hideLoading();
+                
+                // More specific error messages
+                if (error.message.includes('storage')) {
+                    showError('ფოტოების ატვირთვა ვერ მოხერხდა. გთხოვთ სცადოთ სხვა სურათი.');
+                } else if (error.message.includes('permission') || error.code === 'PERMISSION_DENIED') {
+                    showError('სისტემის შეცდომა. გთხოვთ სცადოთ მოგვიანებით.');
+                } else {
+                    showError('წიგნის დამატება ვერ მოხერხდა');
+                }
             } finally {
                 // Re-enable submit button
                 submitBookBtn.disabled = false;
@@ -3262,8 +3302,8 @@ function openBookDetails(bookId) {
             }
         }
         
-        // Handle image upload
-        function handleImageUpload(files) {
+        // Handle image upload - UPDATED WITH BETTER SUPPORT
+        async function handleImageUpload(files) {
             const fileList = Array.from(files);
             
             // Limit to 10 images
@@ -3272,45 +3312,92 @@ function openBookDetails(bookId) {
                 return;
             }
             
-            let processedCount = 0;
+            showLoading('ფოტოების დამუშავება...');
+            uploadProgress.style.display = 'block';
+            progressFill.style.width = '0%';
+            progressText.textContent = '0%';
             
-            fileList.forEach(file => {
-                // Check file type
-                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/heic', 'image/heif'];
-                if (!validTypes.includes(file.type)) {
-                    showError(`ფაილის "${file.name}" ტიპი არ არის მხარდაჭერილი`);
-                    return;
-                }
-                
-                if (file.size > 5 * 1024 * 1024) {
-                    showError(`სურათი "${file.name}" აღემატება 5MB-ს`);
-                    return;
-                }
-                
-                const reader = new FileReader();
-                
-                reader.onload = function(event) {
-                    selectedImages.push(event.target.result);
-                    createImagePreview(event.target.result, selectedImages.length - 1);
-                    processedCount++;
+            let processedCount = 0;
+            const totalFiles = fileList.length;
+            
+            for (const file of fileList) {
+                try {
+                    console.log('Processing file:', file.name, 'Type:', file.type, 'Size:', file.size);
                     
-                    // Hide image error if we have at least one image
-                    if (selectedImages.length > 0) {
-                        imageError.style.display = 'none';
+                    // Update progress
+                    const progress = Math.round((processedCount / totalFiles) * 100);
+                    progressFill.style.width = `${progress}%`;
+                    progressText.textContent = `${progress}%`;
+                    
+                    // Check file type by extension as well
+                    const fileName = file.name.toLowerCase();
+                    const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.heic', '.heif'];
+                    const hasValidExtension = validExtensions.some(ext => fileName.endsWith(ext));
+                    
+                    // Check file size
+                    if (file.size > 5 * 1024 * 1024) {
+                        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                        showError(`სურათი "${file.name}" (${sizeMB}MB) აღემატება 5MB-ს`);
+                        processedCount++;
+                        continue;
                     }
                     
-                    // Enable submit button if we have all required data
-                    if (processedCount === fileList.length) {
-                        checkFormValidity();
+                    let imageDataUrl;
+                    
+                    // Check if it's a HEIC/HEIF file (by extension or MIME type)
+                    const isHeic = fileName.endsWith('.heic') || fileName.endsWith('.heif') || 
+                                  file.type === 'image/heic' || file.type === 'image/heif';
+                    
+                    if (isHeic && window.heic2any) {
+                        console.log('Converting HEIC file:', file.name);
+                        imageDataUrl = await convertHeicToJpeg(file);
+                    } else {
+                        // For regular images or if heic2any is not available
+                        imageDataUrl = await readFileAsDataURL(file);
                     }
-                };
+                    
+                    if (imageDataUrl && imageDataUrl.startsWith('data:image')) {
+                        selectedImages.push(imageDataUrl);
+                        createImagePreview(imageDataUrl, selectedImages.length - 1);
+                        
+                        // Hide image error if we have at least one image
+                        if (selectedImages.length > 0) {
+                            imageError.style.display = 'none';
+                        }
+                        
+                        console.log('Successfully processed:', file.name);
+                    } else {
+                        console.error('Invalid image data for:', file.name);
+                        showError(`სურათის "${file.name}" დამუშავება ვერ მოხერხდა`);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error processing image:', file.name, error);
+                    showError(`სურათის "${file.name}" დამუშავება ვერ მოხერხდა: ${error.message}`);
+                }
                 
-                reader.readAsDataURL(file);
-            });
+                processedCount++;
+            }
+            
+            // Final progress update
+            progressFill.style.width = '100%';
+            progressText.textContent = '100%';
+            
+            // Hide progress after a delay
+            setTimeout(() => {
+                uploadProgress.style.display = 'none';
+            }, 1000);
+            
+            hideLoading();
+            
+            // Show success message
+            if (selectedImages.length > 0) {
+                showSuccess(`${selectedImages.length} ფოტო წარმატებით დაემატა!`);
+            }
         }
         
         // Handle edit image upload
-        function handleEditImageUpload(files) {
+        async function handleEditImageUpload(files) {
             const fileList = Array.from(files);
             
             // Limit to 10 images
@@ -3319,35 +3406,114 @@ function openBookDetails(bookId) {
                 return;
             }
             
-            let processedCount = 0;
+            editUploadProgress.style.display = 'block';
+            editProgressFill.style.width = '0%';
+            editProgressText.textContent = '0%';
             
-            fileList.forEach(file => {
-                // Check file type
-                const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/heic', 'image/heif'];
-                if (!validTypes.includes(file.type)) {
-                    showError(`ფაილის "${file.name}" ტიპი არ არის მხარდაჭერილი`);
-                    return;
+            let processedCount = 0;
+            const totalFiles = fileList.length;
+            
+            for (const file of fileList) {
+                try {
+                    // Update progress
+                    const progress = Math.round((processedCount / totalFiles) * 100);
+                    editProgressFill.style.width = `${progress}%`;
+                    editProgressText.textContent = `${progress}%`;
+                    
+                    // Check file size
+                    if (file.size > 5 * 1024 * 1024) {
+                        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                        showError(`სურათი "${file.name}" (${sizeMB}MB) აღემატება 5MB-ს`);
+                        processedCount++;
+                        continue;
+                    }
+                    
+                    let imageDataUrl;
+                    
+                    // Check if it's a HEIC file
+                    const fileName = file.name.toLowerCase();
+                    const isHeic = fileName.endsWith('.heic') || fileName.endsWith('.heif') || 
+                                  file.type === 'image/heic' || file.type === 'image/heif';
+                    
+                    if (isHeic && window.heic2any) {
+                        imageDataUrl = await convertHeicToJpeg(file);
+                    } else {
+                        imageDataUrl = await readFileAsDataURL(file);
+                    }
+                    
+                    if (imageDataUrl && imageDataUrl.startsWith('data:image')) {
+                        editSelectedImages.push(imageDataUrl);
+                        createEditImagePreview(imageDataUrl, editSelectedImages.length - 1);
+                        
+                        // Hide image error if we have at least one image
+                        if (editSelectedImages.length > 0) {
+                            editImageError.style.display = 'none';
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('Error processing edit image:', error);
+                    showError(`სურათის "${file.name}" დამუშავება ვერ მოხერხდა`);
                 }
                 
-                if (file.size > 5 * 1024 * 1024) {
-                    showError(`სურათი "${file.name}" აღემატება 5MB-ს`);
-                    return;
-                }
-                
+                processedCount++;
+            }
+            
+            // Final progress update
+            editProgressFill.style.width = '100%';
+            editProgressText.textContent = '100%';
+            
+            // Hide progress after a delay
+            setTimeout(() => {
+                editUploadProgress.style.display = 'none';
+            }, 1000);
+        }
+        
+        // Helper function to read file as data URL
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 
                 reader.onload = function(event) {
-                    editSelectedImages.push(event.target.result);
-                    createEditImagePreview(event.target.result, editSelectedImages.length - 1);
-                    processedCount++;
-                    
-                    // Hide image error if we have at least one image
-                    if (editSelectedImages.length > 0) {
-                        editImageError.style.display = 'none';
-                    }
+                    resolve(event.target.result);
+                };
+                
+                reader.onerror = function(event) {
+                    reject(new Error(`ფაილის წაკითხვა ვერ მოხერხდა: ${reader.error?.message || 'უცნობი შეცდომა'}`));
                 };
                 
                 reader.readAsDataURL(file);
+            });
+        }
+        
+        // Helper function to convert HEIC to JPEG
+        async function convertHeicToJpeg(heicFile) {
+            return new Promise((resolve, reject) => {
+                try {
+                    if (!window.heic2any) {
+                        reject(new Error('HEIC კონვერტორი ხელმისაწვდომი არ არის'));
+                        return;
+                    }
+                    
+                    heic2any({
+                        blob: heicFile,
+                        toType: 'image/jpeg',
+                        quality: 0.8
+                    }).then(jpegBlob => {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            resolve(event.target.result);
+                        };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(jpegBlob);
+                    }).catch(error => {
+                        console.error('HEIC conversion error:', error);
+                        // Try to read as regular file if conversion fails
+                        readFileAsDataURL(heicFile).then(resolve).catch(reject);
+                    });
+                } catch (error) {
+                    reject(error);
+                }
             });
         }
         
