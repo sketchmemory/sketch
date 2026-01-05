@@ -2230,35 +2230,28 @@
         const editProgressFill = document.getElementById('editProgressFill');
         const editProgressText = document.getElementById('editProgressText');
         
-        // Initialize the app
-        async function initApp() {
-            // Show loading overlay
-            showLoading('აპლიკაციის ჩატვირთვა...');
-            
-            // Test Firebase connection first
-            const firebaseConnected = await testFirebaseConnection();
-            
-            if (!firebaseConnected) {
-                showWarning('Firebase კავშირი ვერ მოხერხდა. გამოიყენება ლოკალური მონაცემები.');
-                // Load from localStorage only
-                loadFromLocalStorage();
-            } else {
-                // Setup event listeners
-                setupEventListeners();
-                
-                // Check if user is already logged in
-                const savedUser = localStorage.getItem('bookmaster_user');
-                if (savedUser) {
-                    currentUser = savedUser;
-                    loginPage.style.display = 'none';
-                    mainPage.style.display = 'block';
-                    await loadData();
-                }
-            }
-            
-            hideLoading();
-        }
-        
+     async function initApp() {
+    console.log('App initializing...');
+    
+    // Make sure login page is visible
+    loginPage.style.display = 'flex';
+    mainPage.style.display = 'none';
+    loadingOverlay.style.display = 'none';
+    
+    // Setup event listeners first
+    setupEventListeners();
+    
+    // Check if user is already logged in
+    const savedUser = localStorage.getItem('bookmaster_user');
+    if (savedUser) {
+        currentUser = savedUser;
+        loginPage.style.display = 'none';
+        mainPage.style.display = 'block';
+        await loadData();
+    }
+    
+    console.log('App initialized successfully');
+}   
         // Test Firebase connection
         async function testFirebaseConnection() {
             console.log('Testing Firebase connection...');
