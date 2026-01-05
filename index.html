@@ -2061,7 +2061,7 @@ async function initApp() {
 // Update the saveData function to be more robust
 async function saveData() {
     try {
-        console.log('Saving data to Firebase...');
+        console.log('Saving data...');
         
         // Convert arrays to objects for Firebase
         const booksObj = {};
@@ -2079,29 +2079,31 @@ async function saveData() {
         await database.ref('sales').set(salesObj);
         await database.ref('nextBookId').set(nextBookId);
         
-        console.log('✅ Data saved to Firebase successfully');
+        console.log('Data saved to Firebase successfully');
         
         // Also save to localStorage as backup
         localStorage.setItem('bookmaster_books', JSON.stringify(books));
         localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
         localStorage.setItem('bookmaster_nextId', nextBookId.toString());
         
-        console.log('✅ Data saved to localStorage successfully');
+        console.log('Data saved to localStorage successfully');
         
         return true;
         
     } catch (error) {
-        console.error('❌ Error saving to Firebase:', error);
+        console.error('Error saving to Firebase:', error);
         
-        // Try saving to localStorage only
         try {
+            // Fallback to localStorage only
             localStorage.setItem('bookmaster_books', JSON.stringify(books));
             localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
             localStorage.setItem('bookmaster_nextId', nextBookId.toString());
-            console.log('✅ Data saved to localStorage (fallback)');
+            
+            console.log('Data saved to localStorage only');
+            showWarning('მონაცემები შენახულია მხოლოდ ლოკალურად');
             return true;
         } catch (localError) {
-            console.error('❌ Error saving to localStorage:', localError);
+            console.error('Error saving to localStorage:', localError);
             showError('მონაცემების შენახვა ვერ მოხერხდა');
             return false;
         }
@@ -2297,180 +2299,174 @@ function loadFromLocalStorage() {
             });
         }
         
-        // Load data from Firebase with better error handling
-        async function loadData() {
-            try {
-                showLoading('მონაცემების ჩატვირთვა...');
-                
-                // Clear existing data
-                books = [];
-                salesHistory = [];
-                
-                // Load data from Firebase
-                const booksRef = database.ref('books');
-                const salesRef = database.ref('sales');
-                const nextIdRef = database.ref('nextBookId');
-                
-                // Use Promise.all to load all data at once
-                const [booksSnapshot, salesSnapshot, nextIdSnapshot] = await Promise.all([
-                    booksRef.once('value'),
-                    salesRef.once('value'),
-                    nextIdRef.once('value')
-                ]);
-                
-                const booksData = booksSnapshot.val();
-                const salesData = salesSnapshot.val();
-                const nextIdData = nextIdSnapshot.val();
-                
-                // Process books data
-                if (booksData) {
-                    // Convert Firebase object to array
-                    books = Object.values(booksData);
-                    console.log('Loaded books from Firebase:', books.length);
-                } else {
-                    console.log('No books data in Firebase');
-                }
-                
-                // Process sales data
-                if (salesData) {
-                    salesHistory = Object.values(salesData);
-                    console.log('Loaded sales from Firebase:', salesHistory.length);
-                } else {
-                    console.log('No sales data in Firebase');
-                }
-                
-                // Process next ID
-                if (nextIdData) {
-                    nextBookId = nextIdData;
-                } else {
-                    nextBookId = books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1;
-                }
-                
-                // Check if we have data, if not initialize with sample
-                if (books.length === 0) {
-                    console.log('Initializing with sample data');
-                    await initializeSampleData();
-                } else {
-                    // Sync sales history with books (in case of missing entries)
-                    books.forEach(book => {
-                        const existingSale = salesHistory.find(s => s.bookId === book.id);
-                        if (!existingSale) {
-                            salesHistory.push({
-                                bookId: book.id,
-                                title: book.title,
-                                images: book.images,
-                                sold: book.sold || 0,
-                                stock: book.stock,
-                                initialStock: book.initialStock,
-                                revenue: (book.sold || 0) * book.price,
-                                lastSold: book.lastSold || null
-                            });
-                        }
-                    });
-                    
-                    // Save the synced data
-                    await saveData();
-                }
-                
-                // Also load from localStorage as backup
-                const savedBooks = localStorage.getItem('bookmaster_books');
-                const savedSales = localStorage.getItem('bookmaster_sales');
-                const savedNextId = localStorage.getItem('bookmaster_nextId');
-                
-                if (savedBooks) {
-                    const localBooks = JSON.parse(savedBooks);
-                    console.log('Loaded books from localStorage:', localBooks.length);
-                    
-                    // Merge Firebase and localStorage data (Firebase takes priority)
-                    const firebaseIds = books.map(b => b.id);
-                    localBooks.forEach(localBook => {
-                        if (!firebaseIds.includes(localBook.id)) {
-                            books.push(localBook);
-                        }
-                    });
-                }
-                
-                // Render books
-                renderBooks(books);
-                hideLoading();
-                showSuccess('მონაცემები წარმატებით ჩაიტვირთა!');
-                
-            } catch (error) {
-                console.error('Error loading from Firebase:', error);
-                
-                // Try loading from localStorage as fallback
-                try {
-                    const savedBooks = localStorage.getItem('bookmaster_books');
-                    const savedSales = localStorage.getItem('bookmaster_sales');
-                    const savedNextId = localStorage.getItem('bookmaster_nextId');
-                    
-                    if (savedBooks && savedSales) {
-                        books = JSON.parse(savedBooks);
-                        salesHistory = JSON.parse(savedSales);
-                        nextBookId = parseInt(savedNextId) || (books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1);
-                        renderBooks(books);
-                        hideLoading();
-                        showWarning('გამოიყენება ლოკალური მონაცემები');
-                    } else {
-                        await initializeSampleData();
-                    }
-                } catch (localError) {
-                    console.error('Error loading from localStorage:', localError);
-                    await initializeSampleData();
-                }
-            }
+async function loadData() {
+    try {
+        showLoading('მონაცემების ჩატვირთვა...');
+        
+        // Clear existing data
+        books = [];
+        salesHistory = [];
+        
+        // Load data from Firebase
+        const booksRef = database.ref('books');
+        const salesRef = database.ref('sales');
+        const nextIdRef = database.ref('nextBookId');
+        
+        // Use Promise.all to load all data at once
+        const [booksSnapshot, salesSnapshot, nextIdSnapshot] = await Promise.all([
+            booksRef.once('value'),
+            salesRef.once('value'),
+            nextIdRef.once('value')
+        ]);
+        
+        const booksData = booksSnapshot.val();
+        const salesData = salesSnapshot.val();
+        const nextIdData = nextIdSnapshot.val();
+        
+        // Process books data
+        if (booksData) {
+            // Convert Firebase object to array
+            books = Object.values(booksData);
+            console.log('Loaded books from Firebase:', books.length);
         }
         
-        // Save data to Firebase and localStorage with better error handling
-        async function saveData() {
-            try {
-                console.log('Saving data...');
-                
-                // Convert arrays to objects for Firebase
-                const booksObj = {};
-                books.forEach(book => {
-                    booksObj[book.id] = book;
-                });
-                
-                const salesObj = {};
-                salesHistory.forEach(sale => {
-                    salesObj[sale.bookId] = sale;
-                });
-                
-                // Save to Firebase
-                await database.ref('books').set(booksObj);
-                await database.ref('sales').set(salesObj);
-                await database.ref('nextBookId').set(nextBookId);
-                
-                console.log('Data saved to Firebase successfully');
-                
-                // Also save to localStorage as backup
-                localStorage.setItem('bookmaster_books', JSON.stringify(books));
-                localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-                localStorage.setItem('bookmaster_nextId', nextBookId.toString());
-                
-                console.log('Data saved to localStorage successfully');
-                
-                return true;
-                
-            } catch (error) {
-                console.error('Error saving to Firebase:', error);
-                
-                try {
-                    // Fallback to localStorage only
-                    localStorage.setItem('bookmaster_books', JSON.stringify(books));
-                    localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-                    localStorage.setItem('bookmaster_nextId', nextBookId.toString());
-                    
-                    console.log('Data saved to localStorage only');
-                    return true;
-                } catch (localError) {
-                    console.error('Error saving to localStorage:', localError);
-                    showError('მონაცემების შენახვა ვერ მოხერხდა');
-                    return false;
-                }
-            }
+        // Process sales data
+        if (salesData) {
+            salesHistory = Object.values(salesData);
+            console.log('Loaded sales from Firebase:', salesHistory.length);
         }
+        
+        // Process next ID
+        if (nextIdData) {
+            nextBookId = nextIdData;
+        } else {
+            nextBookId = books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1;
+        }
+        
+        // Check if we have data, if not initialize with sample
+        if (books.length === 0) {
+            console.log('Initializing with sample data');
+            await initializeSampleData();
+        } else {
+            // Sync sales history with books (in case of missing entries)
+            books.forEach(book => {
+                const existingSale = salesHistory.find(s => s.bookId === book.id);
+                if (!existingSale) {
+                    salesHistory.push({
+                        bookId: book.id,
+                        title: book.title,
+                        images: book.images,
+                        sold: book.sold || 0,
+                        stock: book.stock,
+                        initialStock: book.initialStock,
+                        revenue: (book.sold || 0) * book.price,
+                        lastSold: book.lastSold || null
+                    });
+                }
+            });
+            
+            // Save the synced data back to Firebase
+            const booksObj = {};
+            books.forEach(book => {
+                booksObj[book.id] = book;
+            });
+            
+            const salesObj = {};
+            salesHistory.forEach(sale => {
+                salesObj[sale.bookId] = sale;
+            });
+            
+            await database.ref('books').set(booksObj);
+            await database.ref('sales').set(salesObj);
+        }
+        
+        // Also update localStorage with Firebase data
+        localStorage.setItem('bookmaster_books', JSON.stringify(books));
+        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+        localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+        
+        // Render books
+        renderBooks(books);
+        hideLoading();
+        showSuccess('მონაცემები წარმატებით ჩაიტვირთა!');
+        
+    } catch (error) {
+        console.error('Error loading from Firebase:', error);
+        
+        // Try loading from localStorage as fallback
+        try {
+            const savedBooks = localStorage.getItem('bookmaster_books');
+            const savedSales = localStorage.getItem('bookmaster_sales');
+            const savedNextId = localStorage.getItem('bookmaster_nextId');
+            
+            if (savedBooks && savedSales) {
+                books = JSON.parse(savedBooks);
+                salesHistory = JSON.parse(savedSales);
+                nextBookId = parseInt(savedNextId) || (books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1);
+                renderBooks(books);
+                hideLoading();
+                showSuccess('მონაცემები ჩაიტვირთა ლოკალურად');
+            } else {
+                await initializeSampleData();
+            }
+        } catch (localError) {
+            console.error('Error loading from localStorage:', localError);
+            await initializeSampleData();
+        }
+    }
+}
+        
+        // Save data to Firebase and localStorage with better error handling
+async function saveData() {
+    try {
+        console.log('Saving data...');
+        
+        // Convert arrays to objects for Firebase
+        const booksObj = {};
+        books.forEach(book => {
+            booksObj[book.id] = book;
+        });
+        
+        const salesObj = {};
+        salesHistory.forEach(sale => {
+            salesObj[sale.bookId] = sale;
+        });
+        
+        // Save to Firebase
+        await database.ref('books').set(booksObj);
+        await database.ref('sales').set(salesObj);
+        await database.ref('nextBookId').set(nextBookId);
+        
+        console.log('Data saved to Firebase successfully');
+        
+        // Also save to localStorage as backup
+        localStorage.setItem('bookmaster_books', JSON.stringify(books));
+        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+        localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+        
+        console.log('Data saved to localStorage successfully');
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Error saving to Firebase:', error);
+        
+        try {
+            // Fallback to localStorage only
+            localStorage.setItem('bookmaster_books', JSON.stringify(books));
+            localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+            localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+            
+            console.log('Data saved to localStorage only');
+            showWarning('მონაცემები შენახულია მხოლოდ ლოკალურად');
+            return true;
+        } catch (localError) {
+            console.error('Error saving to localStorage:', localError);
+            showError('მონაცემების შენახვა ვერ მოხერხდა');
+            return false;
+        }
+    }
+}
         
         // Initialize with sample data
         async function initializeSampleData() {
@@ -2646,58 +2642,96 @@ function loadFromLocalStorage() {
             renderBooks(filteredBooks);
         }
         
-        // Open book details
-        function openBookDetails(bookId) {
-            const book = books.find(b => b.id === bookId);
-            if (!book) return;
+// Open book details
+function openBookDetails(bookId) {
+    const book = books.find(b => b.id === bookId);
+    if (!book) return;
+    
+    currentBookId = bookId;
+    
+    const soldCount = book.sold || 0;
+    const revenue = soldCount * book.price;
+    
+    const detailsContent = document.getElementById('bookDetailsContent');
+    detailsContent.innerHTML = `
+        <div class="book-details-images">
+            <img src="${book.images[0]}" alt="${book.title}" class="book-details-main-image" id="mainBookImage" style="cursor: pointer;">
+            <div class="book-details-thumbnails">
+                ${book.images.map((img, index) => `
+                    <img src="${img}" alt="${book.title} - სურათი ${index+1}" 
+                         class="book-thumbnail ${index === 0 ? 'active' : ''}" 
+                         data-index="${index}"
+                         style="cursor: pointer;">
+                `).join('')}
+            </div>
+        </div>
+        <div class="book-details-info">
+            <h2 class="book-details-title">${book.title}</h2>
+            <p class="book-details-description">${book.description}</p>
             
-            currentBookId = bookId;
-            
-            const soldCount = book.sold || 0;
-            const revenue = soldCount * book.price;
-            
-            const detailsContent = document.getElementById('bookDetailsContent');
-            detailsContent.innerHTML = `
-                <div class="book-details-images">
-                    <img src="${book.images[0]}" alt="${book.title}" class="book-details-main-image" id="mainBookImage">
-                    <div class="book-details-thumbnails">
-                        ${book.images.map((img, index) => `
-                            <img src="${img}" alt="${book.title} - სურათი ${index+1}" 
-                                 class="book-thumbnail ${index === 0 ? 'active' : ''}" 
-                                 data-index="${index}">
-                        `).join('')}
-                    </div>
+            <div class="book-details-stats">
+                <div class="details-stat">
+                    <div class="details-stat-label">მარაგში</div>
+                    <div class="details-stat-value">${book.stock}</div>
                 </div>
-                <div class="book-details-info">
-                    <h2 class="book-details-title">${book.title}</h2>
-                    <p class="book-details-description">${book.description}</p>
-                    
-                    <div class="book-details-stats">
-                        <div class="details-stat">
-                            <div class="details-stat-label">მარაგში</div>
-                            <div class="details-stat-value">${book.stock}</div>
-                        </div>
-                        <div class="details-stat">
-                            <div class="details-stat-label">გაყიდული</div>
-                            <div class="details-stat-value">${soldCount}</div>
-                        </div>
-                        <div class="details-stat">
-                            <div class="details-stat-label">ფასი</div>
-                            <div class="details-stat-value">${book.price} ₾</div>
-                        </div>
-                        <div class="details-stat">
-                            <div class="details-stat-label">შემოსავალი ამ წიგნიდან</div>
-                            <div class="details-stat-value income">${revenue} ₾</div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                        <button class="btn-secondary" id="updateStockBtn">
-                            <i class="fas fa-boxes"></i> მარაგის განახლება
-                        </button>
-                    </div>
+                <div class="details-stat">
+                    <div class="details-stat-label">გაყიდული</div>
+                    <div class="details-stat-value">${soldCount}</div>
                 </div>
-            `;
+                <div class="details-stat">
+                    <div class="details-stat-label">ფასი</div>
+                    <div class="details-stat-value">${book.price} ₾</div>
+                </div>
+                <div class="details-stat">
+                    <div class="details-stat-label">შემოსავალი ამ წიგნიდან</div>
+                    <div class="details-stat-value income">${revenue} ₾</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button class="btn-secondary" id="updateStockBtn">
+                    <i class="fas fa-boxes"></i> მარაგის განახლება
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Add event listeners to thumbnails
+    const thumbnails = detailsContent.querySelectorAll('.book-thumbnail');
+    const mainImage = document.getElementById('mainBookImage');
+    
+    thumbnails.forEach(thumb => {
+        thumb.addEventListener('click', () => {
+            thumbnails.forEach(t => t.classList.remove('active'));
+            thumb.classList.add('active');
+            mainImage.src = thumb.src;
+        });
+        
+        // Click to open image in new tab
+        thumb.addEventListener('dblclick', () => {
+            window.open(thumb.src, '_blank');
+        });
+    });
+    
+    // Click main image to open in new tab
+    mainImage.addEventListener('click', () => {
+        window.open(mainImage.src, '_blank');
+    });
+    
+    // Update stock button
+    const updateStockBtn = detailsContent.querySelector('#updateStockBtn');
+    updateStockBtn.addEventListener('click', () => {
+        const book = books.find(b => b.id === currentBookId);
+        if (book) {
+            document.getElementById('currentStock').value = book.stock;
+            document.getElementById('newStock').value = book.stock;
+            updateStockModal.style.display = 'flex';
+            bookDetailsModal.style.display = 'none';
+        }
+    });
+    
+    bookDetailsModal.style.display = 'flex';
+}
             
             // Add event listeners to thumbnails
             const thumbnails = detailsContent.querySelectorAll('.book-thumbnail');
@@ -2839,111 +2873,130 @@ function loadFromLocalStorage() {
             }
         }
         
-        // Handle add book
-        async function handleAddBook(e) {
-            e.preventDefault();
-            
-            const title = document.getElementById('bookTitle').value.trim();
-            const stock = parseInt(document.getElementById('bookStock').value);
-            const price = parseInt(document.getElementById('bookPrice').value);
-            const description = document.getElementById('bookDescription').value.trim();
-            const color = bookColorSelect.value === 'other' ? customColorInput.value.trim() : bookColorSelect.value;
-            
-            // Validate required fields
-            if (!title || isNaN(stock) || stock < 1 || isNaN(price) || price < 1) {
-                showError('გთხოვთ შეავსოთ სავალდებულო ველები სწორად');
-                return;
-            }
-            
-            if (!color) {
-                showError('გთხოვთ აირჩიოთ წიგნის ფერი');
-                return;
-            }
-            
-            if (!description) {
-                showError('გთხოვთ შეავსოთ აღწერის ველი');
-                return;
-            }
-            
-            // Validate image
-            if (selectedImages.length === 0) {
-                imageError.style.display = 'block';
-                showError('გთხოვთ ატვირთოთ მინიმუმ ერთი ფოტო');
-                return;
-            }
-            
-            imageError.style.display = 'none';
-            
-            // Disable submit button to prevent multiple submissions
-            submitBookBtn.disabled = true;
-            submitBookBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> დამატება...';
-            
-            showLoading('წიგნის დამატება...');
-            
-            try {
-                // Create new book with color in description
-                const descriptionWithColor = description.includes('ფერი:') ? 
-                    description : `${description}. ფერი: ${color}`;
-                
-                const newBook = {
-                    id: nextBookId++,
-                    title,
-                    color: color,
-                    description: descriptionWithColor,
-                    stock,
-                    initialStock: stock,
-                    price,
-                    images: selectedImages,
-                    sold: 0,
-                    lastSold: null
-                };
-                
-                // Add to books array
-                books.push(newBook);
-                
-                // Add to sales history
-                salesHistory.push({
-                    bookId: newBook.id,
-                    title: newBook.title,
-                    images: newBook.images,
-                    sold: 0,
-                    stock: newBook.stock,
-                    initialStock: newBook.initialStock,
-                    revenue: 0,
-                    lastSold: null
-                });
-                
-                // Save data and update UI
-                const saveSuccess = await saveData();
-                if (saveSuccess) {
-                    renderBooks(books);
-                    
-                    // Close modal and reset form
-                    addBookModal.style.display = 'none';
-                    addBookForm.reset();
-                    bookColorSelect.value = '';
-                    customColorContainer.classList.remove('show');
-                    customColorInput.value = '';
-                    document.getElementById('bookPrice').value = DEFAULT_BOOK_PRICE;
-                    selectedImages = [];
-                    imagePreview.innerHTML = '';
-                    
-                    hideLoading();
-                    showSuccess(`"${title}" წარმატებით დაემატა!`);
-                } else {
-                    hideLoading();
-                    showError('წიგნის დამატება ვერ მოხერხდა');
-                }
-            } catch (error) {
-                console.error('Error adding book:', error);
-                hideLoading();
-                showError('წიგნის დამატება ვერ მოხერხდა');
-            } finally {
-                // Re-enable submit button
-                submitBookBtn.disabled = false;
-                submitBookBtn.innerHTML = '<i class="fas fa-save"></i> წიგნის დამატება';
-            }
-        }
+  async function handleAddBook(e) {
+    e.preventDefault();
+    
+    const title = document.getElementById('bookTitle').value.trim();
+    const stock = parseInt(document.getElementById('bookStock').value);
+    const price = parseInt(document.getElementById('bookPrice').value);
+    const description = document.getElementById('bookDescription').value.trim();
+    const color = bookColorSelect.value === 'other' ? customColorInput.value.trim() : bookColorSelect.value;
+    
+    // Validate required fields
+    if (!title || isNaN(stock) || stock < 1 || isNaN(price) || price < 1) {
+        showError('გთხოვთ შეავსოთ სავალდებულო ველები სწორად');
+        return;
+    }
+    
+    if (!color) {
+        showError('გთხოვთ აირჩიოთ წიგნის ფერი');
+        return;
+    }
+    
+    if (!description) {
+        showError('გთხოვთ შეავსოთ აღწერის ველი');
+        return;
+    }
+    
+    // Validate image
+    if (selectedImages.length === 0) {
+        imageError.style.display = 'block';
+        showError('გთხოვთ ატვირთოთ მინიმუმ ერთი ფოტო');
+        return;
+    }
+    
+    imageError.style.display = 'none';
+    
+    // Disable submit button to prevent multiple submissions
+    submitBookBtn.disabled = true;
+    submitBookBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> დამატება...';
+    
+    showLoading('წიგნის დამატება...');
+    
+    try {
+        // Create new book with color in description
+        const descriptionWithColor = description.includes('ფერი:') ? 
+            description : `${description}. ფერი: ${color}`;
+        
+        const newBook = {
+            id: nextBookId,
+            title,
+            color: color,
+            description: descriptionWithColor,
+            stock,
+            initialStock: stock,
+            price,
+            images: selectedImages,
+            sold: 0,
+            lastSold: null
+        };
+        
+        // Add to books array
+        books.push(newBook);
+        
+        // Add to sales history
+        const newSale = {
+            bookId: nextBookId,
+            title: title,
+            images: selectedImages,
+            sold: 0,
+            stock: stock,
+            initialStock: stock,
+            revenue: 0,
+            lastSold: null
+        };
+        salesHistory.push(newSale);
+        
+        // Save to Firebase - DIRECT SAVE
+        const booksObj = {};
+        books.forEach(book => {
+            booksObj[book.id] = book;
+        });
+        
+        const salesObj = {};
+        salesHistory.forEach(sale => {
+            salesObj[sale.bookId] = sale;
+        });
+        
+        // Save to Firebase
+        await database.ref('books').set(booksObj);
+        await database.ref('sales').set(salesObj);
+        await database.ref('nextBookId').set(nextBookId + 1);
+        
+        // Save to localStorage
+        localStorage.setItem('bookmaster_books', JSON.stringify(books));
+        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+        localStorage.setItem('bookmaster_nextId', (nextBookId + 1).toString());
+        
+        // Update nextBookId
+        nextBookId = nextBookId + 1;
+        
+        // Update UI
+        renderBooks(books);
+        
+        // Close modal and reset form
+        addBookModal.style.display = 'none';
+        addBookForm.reset();
+        bookColorSelect.value = '';
+        customColorContainer.classList.remove('show');
+        customColorInput.value = '';
+        document.getElementById('bookPrice').value = DEFAULT_BOOK_PRICE;
+        selectedImages = [];
+        imagePreview.innerHTML = '';
+        
+        hideLoading();
+        showSuccess(`"${title}" წარმატებით დაემატა!`);
+        
+    } catch (error) {
+        console.error('Error adding book:', error);
+        hideLoading();
+        showError('წიგნის დამატება ვერ მოხერხდა');
+    } finally {
+        // Re-enable submit button
+        submitBookBtn.disabled = false;
+        submitBookBtn.innerHTML = '<i class="fas fa-save"></i> წიგნის დამატება';
+    }
+}
         
         // Handle image upload with HEIC support
         function handleImageUpload(files) {
@@ -3116,47 +3169,61 @@ const totalLeftCount = totalBooksCount; // This should be the current stock, not
             confirmationModal.style.display = 'flex';
         }
         
-        // Handle confirm delete
-        async function handleConfirmDelete() {
-            if (!bookToDelete) return;
-            
-            confirmationModal.style.display = 'none';
-            showLoading('წიგნის წაშლა...');
-            
-            try {
-                const bookIndex = books.findIndex(b => b.id === bookToDelete);
-                if (bookIndex === -1) return;
-                
-                const bookTitle = books[bookIndex].title;
-                
-                // Remove from books array
-                books.splice(bookIndex, 1);
-                
-                // Remove from sales history
-                const salesIndex = salesHistory.findIndex(s => s.bookId === bookToDelete);
-                if (salesIndex !== -1) {
-                    salesHistory.splice(salesIndex, 1);
-                }
-                
-                // Save data and update UI
-                const saveSuccess = await saveData();
-                if (saveSuccess) {
-                    renderBooks(books);
-                    updateIncomeStats();
-                    hideLoading();
-                    showSuccess(`"${bookTitle}" წარმატებით წაიშალა!`);
-                } else {
-                    hideLoading();
-                    showError('წიგნის წაშლა ვერ მოხერხდა');
-                }
-            } catch (error) {
-                console.error('Error deleting book:', error);
-                hideLoading();
-                showError('წიგნის წაშლა ვერ მოხერხდა');
-            } finally {
-                bookToDelete = null;
-            }
+async function handleConfirmDelete() {
+    if (!bookToDelete) return;
+    
+    confirmationModal.style.display = 'none';
+    showLoading('წიგნის წაშლა...');
+    
+    try {
+        const bookIndex = books.findIndex(b => b.id === bookToDelete);
+        if (bookIndex === -1) return;
+        
+        const bookTitle = books[bookIndex].title;
+        const bookId = books[bookIndex].id;
+        
+        // Remove from books array
+        books.splice(bookIndex, 1);
+        
+        // Remove from sales history array
+        const salesIndex = salesHistory.findIndex(s => s.bookId === bookToDelete);
+        if (salesIndex !== -1) {
+            salesHistory.splice(salesIndex, 1);
         }
+        
+        // Save data to Firebase - FIXED
+        const booksObj = {};
+        books.forEach(book => {
+            booksObj[book.id] = book;
+        });
+        
+        const salesObj = {};
+        salesHistory.forEach(sale => {
+            salesObj[sale.bookId] = sale;
+        });
+        
+        // Update Firebase
+        await database.ref('books').set(booksObj);
+        await database.ref('sales').set(salesObj);
+        
+        // Update localStorage
+        localStorage.setItem('bookmaster_books', JSON.stringify(books));
+        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+        
+        // Update UI
+        renderBooks(books);
+        updateIncomeStats();
+        hideLoading();
+        showSuccess(`"${bookTitle}" წარმატებით წაიშალა!`);
+        
+    } catch (error) {
+        console.error('Error deleting book:', error);
+        hideLoading();
+        showError('წიგნის წაშლა ვერ მოხერხდა');
+    } finally {
+        bookToDelete = null;
+    }
+}
         
         // Sort sales table
         function sortSalesTable(sortBy) {
