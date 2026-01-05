@@ -372,6 +372,54 @@
             gap: 20px;
         }
         
+        @media (max-width: 768px) {
+    /* Make modals take more screen height */
+    .modal-content {
+        max-height: 95%; /* Increased from 95vh to give more content space */
+        height: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* შემოსავალი modal specific */
+    #incomeModal .modal-body {
+        max-height: 95%;
+        overflow-y: auto;
+        padding-bottom: 10px;
+    }
+    
+    /* ახალი წიგნის დამატება modal specific */
+    #addBookModal form {
+        display: flex;
+        flex-direction: column;
+        height: 95%;
+    }
+    
+    #addBookModal .modal-body {
+        flex-grow: 1;
+        overflow-y: auto;
+        max-height: 95%;
+        padding-bottom: 10px;
+    }
+    
+    /* დეტალები modal specific */
+    #bookDetailsModal .book-details {
+        max-height: 95%;
+        overflow-y: auto;
+        padding-bottom: 10px;
+    }
+    
+    /* Make sure modal footer stays at bottom */
+    .modal-footer {
+        position: sticky;
+        bottom: 0;
+        background-color: white;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        margin-top: auto;
+    }
+}
+
 @media (max-width: 640px) {
     .books-grid {
         grid-template-columns: repeat(5, 1fr);
