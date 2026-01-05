@@ -3974,8 +3974,26 @@
             showToast('warning', 'გაფრთხილება', message);
         }
         
-        // Initialize app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initApp);
+
+// Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // First, make sure login page is visible
+            loginPage.style.display = 'flex';
+            mainPage.style.display = 'none';
+            loadingOverlay.style.display = 'none';
+            
+            // Then initialize the app
+            initApp();
+        });
+        
+        // Add a simple fallback if DOMContentLoaded doesn't fire
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            // DOM already loaded
+            setTimeout(initApp, 100);
+        }
+        
     </script>
 </body>
 </html>
