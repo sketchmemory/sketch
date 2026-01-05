@@ -375,7 +375,7 @@
         @media (max-width: 768px) {
     /* Make modals take more screen height */
     .modal-content {
-        max-height: 95%; /* Increased from 95vh to give more content space */
+        max-height: 85vh; /* Increased from 95vh to give more content space */
         height: auto;
         display: flex;
         flex-direction: column;
@@ -383,7 +383,7 @@
     
     /* შემოსავალი modal specific */
     #incomeModal .modal-body {
-        max-height: 95%;
+        max-height: 60vh;
         overflow-y: auto;
         padding-bottom: 10px;
     }
@@ -392,19 +392,19 @@
     #addBookModal form {
         display: flex;
         flex-direction: column;
-        height: 95%;
+        height: 100%;
     }
     
     #addBookModal .modal-body {
         flex-grow: 1;
         overflow-y: auto;
-        max-height: 95%;
+        max-height: 60vh;
         padding-bottom: 10px;
     }
     
     /* დეტალები modal specific */
     #bookDetailsModal .book-details {
-        max-height: 95%;
+        max-height: 60vh;
         overflow-y: auto;
         padding-bottom: 10px;
     }
@@ -417,6 +417,58 @@
         padding-top: 10px;
         padding-bottom: 10px;
         margin-top: auto;
+    }
+}
+
+@media (max-width: 640px) {
+    .modal-content {
+        max-height: 90vh; /* Even taller on very small screens */
+        max-width: 95vw;
+    }
+    
+    /* Adjust modal headers */
+    .modal-header {
+        padding: 15px;
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 10;
+    }
+    
+    /* Adjust modal bodies */
+    #incomeModal .modal-body,
+    #addBookModal .modal-body,
+    #bookDetailsModal .modal-body {
+        max-height: 65vh; /* More space for content */
+    }
+    
+    /* Specific adjustments for შემოსავალი modal */
+    .income-stats {
+        max-height: 40vh;
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+    
+    .sales-table-container {
+        max-height: 40vh;
+        overflow-y: auto;
+    }
+    
+    /* Specific adjustments for დეტალები modal */
+    .book-details {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .book-details-images {
+        flex-shrink: 0;
+    }
+    
+    .book-details-info {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-bottom: 10px;
     }
 }
 
@@ -1865,8 +1917,8 @@
         const database = firebase.database();
         
         // Login credentials
-        const VALID_USERNAME = "alex";
-        const VALID_PASSWORD = "2911";
+        const VALID_USERNAME = "admin";
+        const VALID_PASSWORD = "admin";
         const DEFAULT_BOOK_PRICE = 35;
         
         // Application state
