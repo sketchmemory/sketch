@@ -372,12 +372,89 @@
             gap: 20px;
         }
         
-        @media (max-width: 640px) {
-            .books-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 15px;
-            }
-        }
+@media (max-width: 640px) {
+    .books-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px; /* Even smaller gap */
+    }
+    
+    .book-card {
+        min-height: auto;
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* Make card take full height */
+    }
+    
+    .book-image-container {
+        height: 65px; /* Smaller image area */
+        flex-shrink: 0; /* Don't shrink image */
+    }
+    
+    .book-image {
+        object-fit: contain;
+        background-color: #f8f9fa;
+    }
+    
+    .book-info {
+        padding: 5px 3px; /* Minimal padding */
+        flex-grow: 1; /* Take remaining space */
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .book-title {
+        font-size: 9px; /* Very small but readable */
+        margin-bottom: 2px;
+        line-height: 1.1;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Allow 3 lines for title */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-weight: 600;
+        min-height: 30px; /* Reserve space for 3 lines */
+    }
+    
+    .book-description {
+        font-size: 7px; /* Tiny but readable */
+        line-height: 1.1;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* Show 2 lines max */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 5px;
+        color: #666;
+        flex-grow: 0; /* Don't grow */
+    }
+    
+    .book-footer {
+        margin-top: auto; /* Push to bottom */
+        flex-direction: column; /* Stack vertically */
+        gap: 2px;
+    }
+    
+    .book-stock {
+        font-size: 8px;
+        color: var(--success-color);
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    
+    .book-price {
+        font-size: 9px;
+        font-weight: 700;
+        color: var(--dark-color);
+    }
+    
+    .sell-btn {
+        font-size: 8px;
+        padding: 3px 5px;
+        min-width: 40px;
+        margin-top: 2px;
+        white-space: nowrap;
+        width: 100%; /* Full width */
+        text-align: center;
+    }
+}
         
         .book-card {
             background-color: white;
@@ -410,12 +487,13 @@
             }
         }
         
-        .book-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
+.book-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Changed from 'cover' to 'contain' */
+    transition: var(--transition);
+    background-color: #f5f5f5; /* Add background for empty space */
+}
         
         .book-card:hover .book-image {
             transform: scale(1.05);
@@ -821,11 +899,24 @@
             margin-bottom: 20px;
         }
         
-        @media (max-width: 640px) {
-            .income-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
+@media (max-width: 640px) {
+    .income-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px; /* Reduce gap */
+    }
+    
+    .stat-card {
+        padding: 15px; /* Reduce padding */
+    }
+    
+    .stat-value {
+        font-size: 20px; /* Smaller font */
+    }
+    
+    .stat-title {
+        font-size: 12px; /* Smaller font */
+    }
+}
         
         .stat-card {
             background-color: white;
@@ -967,11 +1058,31 @@
             box-shadow: var(--box-shadow);
         }
         
-        @media (max-width: 640px) {
-            .book-details-main-image {
-                height: 200px;
-            }
-        }
+@media (max-width: 640px) {
+    .book-details-main-image {
+        height: 150px; /* Smaller height */
+    }
+    
+    .book-details {
+        gap: 15px; /* Reduce gap */
+    }
+    
+    .book-details-title {
+        font-size: 18px; /* Smaller title */
+    }
+    
+    .book-details-description {
+        font-size: 14px; /* Smaller description */
+    }
+    
+    .details-stat {
+        padding: 8px; /* Less padding */
+    }
+    
+    .details-stat-value {
+        font-size: 16px; /* Smaller value */
+    }
+}
         
         .book-details-thumbnails {
             display: flex;
@@ -2832,8 +2943,8 @@ function loadFromLocalStorage() {
             const totalBooksCount = books.reduce((sum, book) => sum + book.stock, 0);
             const totalSoldCount = salesHistory.reduce((sum, sale) => sum + sale.sold, 0);
             const totalIncomeValue = salesHistory.reduce((sum, sale) => sum + sale.revenue, 0);
-            const totalLeftCount = books.reduce((sum, book) => sum + (book.initialStock - (book.sold || 0)), 0);
-            
+const totalLeftCount = totalBooksCount; // This should be the current stock, not initial stock minus sold
+
             // Update UI
             totalBooks.textContent = totalBooksCount;
             totalSold.textContent = totalSoldCount;
