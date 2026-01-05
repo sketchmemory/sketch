@@ -684,6 +684,53 @@
             color: var(--dark-color);
         }
         
+        /* Import Drive Button */
+#importDriveBtn {
+    background: linear-gradient(90deg, #4285f4, #34a853) !important;
+}
+
+#importDriveBtn:hover {
+    background: linear-gradient(90deg, #3367d6, #2e8b57) !important;
+    box-shadow: 0 7px 14px rgba(66, 133, 244, 0.3) !important;
+}
+
+/* Import Preview */
+.import-preview-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    gap: 10px;
+}
+
+.import-preview-item:last-child {
+    border-bottom: none;
+}
+
+.import-preview-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #e1e5ee;
+}
+
+.import-preview-info {
+    flex: 1;
+}
+
+.import-preview-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--dark-color);
+    margin-bottom: 3px;
+}
+
+.import-preview-details {
+    font-size: 12px;
+    color: var(--gray-color);
+}
+
         /* Add Edit Button Style */
         .book-actions {
             display: flex;
@@ -1702,6 +1749,99 @@
     </style>
 </head>
 <body>
+  <!-- Google Drive Import Modal -->
+<div class="modal" id="importDriveModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">იმპორტი Google Drive-დან</h2>
+            <button class="close-btn" id="closeImportModal"></button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="drive-import-instructions">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <i class="fab fa-google-drive" style="font-size: 50px; color: #4285f4;"></i>
+                    <h3 style="margin: 10px 0; color: var(--dark-color);">იმპორტის ინსტრუქცია</h3>
+                </div>
+                
+<div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+    <ol style="margin-left: 20px; color: var(--gray-color);">
+        <li><strong>Important:</strong> First, make sure your Google Drive folder is publicly shared:</li>
+        <ol style="margin-left: 20px; margin-top: 5px;">
+            <li>Go to your Google Drive folder</li>
+            <li>Click the "Share" button</li>
+            <li>Click "Change to anyone with the link"</li>
+            <li>Set permission to "Viewer"</li>
+            <li>Click "Copy link"</li>
+        </ol>
+        <li>Paste the copied link in the field below</li>
+        <li>Book names will be taken from image filenames</li>
+        <li>Image formats: JPG, PNG, GIF</li>
+        <li>You can include price in filename: <code>Book_Name_35.jpg</code></li>
+        <li>Or set a default price for all books below</li>
+    </ol>
+</div>
+                
+                <div class="form-group">
+                    <label for="driveFolderUrl" class="required-field">Google Drive საჯარო ლინკი</label>
+                    <input type="url" id="driveFolderUrl" 
+                           placeholder="https://drive.google.com/drive/folders/..."
+                           required>
+                    <small style="color: var(--gray-color); font-size: 12px;">
+                        მაგალითი: https://drive.google.com/drive/folders/1AbCdEfGhIjKlMnOpQrStUvWxYz
+                    </small>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="defaultPrice">სტანდარტული ფასი (ყველა წიგნისთვის)</label>
+                        <input type="number" id="defaultPrice" min="1" value="35">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="defaultStock">სტანდარტული რაოდენობა</label>
+                        <input type="number" id="defaultStock" min="1" value="1">
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="defaultColor">სტანდარტული ფერი</label>
+                    <select id="defaultColor" class="book-color-select">
+                        <option value="">აირჩიეთ ფერი</option>
+                        <option value="წითელი">წითელი</option>
+                        <option value="ლურჯი">ლურჯი</option>
+                        <option value="მწვანე">მწვანე</option>
+                        <option value="ყვითელი">ყვითელი</option>
+                        <option value="შავი" selected>შავი</option>
+                        <option value="თეთრი">თეთრი</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="defaultDescription">სტანდარტული აღწერა</label>
+                    <textarea id="defaultDescription" placeholder="წიგნის აღწერა...">კოლორირებადი წიგნი. ფერი: შავი</textarea>
+                </div>
+                
+                <div class="preview-section" style="margin-top: 20px; display: none;" id="previewSection">
+                    <h4 style="margin-bottom: 15px; color: var(--dark-color);">წინასწარი ნახვა</h4>
+                    <div id="importPreview" style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 8px; padding: 10px;">
+                        <!-- Preview will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="cancelImport">გაუქმება</button>
+            <button type="button" class="btn-primary" id="previewImportBtn">
+                <i class="fas fa-eye"></i> წინასწარი ნახვა
+            </button>
+            <button type="button" class="btn-edit" id="confirmImportBtn" style="display: none;">
+                <i class="fas fa-download"></i> იმპორტის დაწყება
+            </button>
+        </div>
+    </div>
+</div>
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
@@ -1793,6 +1933,16 @@
                 </div>
             </div>
             
+            <!-- In the action-buttons div -->
+<div class="action-buttons">
+    <button class="add-book-btn" id="addBookBtn">
+        <i class="fas fa-plus-circle"></i> ახალი წიგნის დამატება
+    </button>
+    <button class="add-book-btn" id="importDriveBtn" style="background: linear-gradient(90deg, #4285f4, #34a853);">
+        <i class="fab fa-google-drive"></i> იმპორტი Google Drive-დან
+    </button>
+</div>
+
             <div class="books-grid" id="booksGrid">
                 <!-- Books will be loaded here dynamically -->
             </div>
@@ -2092,6 +2242,189 @@
         </div>
     </div>
 
+<!-- Replace the entire modal content with this -->
+<div class="modal" id="importDriveModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">იმპორტი Google Drive-დან</h2>
+            <button class="close-btn" id="closeImportModal"></button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="drive-import-instructions">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <i class="fab fa-google-drive" style="font-size: 50px; color: #4285f4;"></i>
+                    <h3 style="margin: 10px 0; color: var(--dark-color);">2 გზა იმპორტისთვის</h3>
+                </div>
+                
+                <!-- Option 1: Manual Image Links -->
+                <div style="margin-bottom: 30px; padding: 15px; background: #f0f7ff; border-radius: 10px;">
+                    <h4 style="color: #4285f4; margin-bottom: 10px;">
+                        <i class="fas fa-link"></i> გზა 1: პირდაპირი ლინკებით
+                    </h4>
+                    <div class="form-group">
+                        <label for="imageLinks">წიგნების სურათების ლინკები (ერთი ხაზზე ერთი)</label>
+                        <textarea id="imageLinks" rows="6" 
+                                  placeholder="https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID_1
+https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID_2
+https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID_3"></textarea>
+                        <small style="color: var(--gray-color); font-size: 12px;">
+                            თითოეულ სურათს დაარქვით სახელი: <code>წიგნის_სახელი_35.jpg</code> ან გამოიყენეთ ქვემოთ მოცემული სტანდარტული ფასი
+                        </small>
+                    </div>
+                </div>
+                
+                <!-- Option 2: Folder Link (Simplified) -->
+                <div style="margin-bottom: 30px; padding: 15px; background: #f0fff0; border-radius: 10px;">
+                    <h4 style="color: #34a853; margin-bottom: 10px;">
+                        <i class="fas fa-folder"></i> გზა 2: Google Drive ფოლდერით
+                    </h4>
+                    <div class="form-group">
+                        <label for="driveFolderUrl">Google Drive ფოლდერის ლინკი</label>
+                        <input type="url" id="driveFolderUrl" 
+                               placeholder="https://drive.google.com/drive/folders/1rX7g_1bHqhnxZGeSD34VwiGkVLRpsvV_">
+                        <small style="color: var(--gray-color); font-size: 12px;">
+                            <strong>მნიშვნელოვანი:</strong> ფოლდერი უნდა იყოს საჯაროდ გაზიარებული "ნებისმიერი ვინც ბმულს ფლობს" პარამეტრით
+                        </small>
+                    </div>
+                </div>
+                
+                <!-- Common Settings -->
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: var(--dark-color);">საერთო პარამეტრები</h4>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="defaultPrice">სტანდარტული ფასი</label>
+                            <input type="number" id="defaultPrice" min="1" value="35">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="defaultStock">რაოდენობა</label>
+                            <input type="number" id="defaultStock" min="1" value="1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="defaultColor">ფერი</label>
+                        <select id="defaultColor" class="book-color-select">
+                            <option value="შავი" selected>შავი</option>
+                            <option value="წითელი">წითელი</option>
+                            <option value="ლურჯი">ლურჯი</option>
+                            <option value="მწვანე">მწვანე</option>
+                            <option value="ყვითელი">ყვითელი</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="defaultDescription">აღწერა</label>
+                        <textarea id="defaultDescription">კოლორირებადი წიგნი. ფერი: შავი</textarea>
+                    </div>
+                </div>
+                
+                <!-- Preview Section -->
+                <div class="preview-section" style="margin-top: 20px; display: none;" id="previewSection">
+                    <h4 style="margin-bottom: 15px; color: var(--dark-color);">
+                        <i class="fas fa-eye"></i> წინასწარი ნახვა
+                    </h4>
+                    <div id="importPreview" style="max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 8px; padding: 10px; background: white;">
+                        <!-- Preview will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="cancelImport">გაუქმება</button>
+            <button type="button" class="btn-primary" id="previewImportBtn">
+                <i class="fas fa-eye"></i> წინასწარი ნახვა
+            </button>
+            <button type="button" class="btn-edit" id="confirmImportBtn" style="display: none;">
+                <i class="fas fa-download"></i> იმპორტის დაწყება
+            </button>
+        </div>
+    </div>
+</div>
+                
+<div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+    <ol style="margin-left: 20px; color: var(--gray-color);">
+        <li><strong>Important:</strong> First, make sure your Google Drive folder is publicly shared:</li>
+        <ol style="margin-left: 20px; margin-top: 5px;">
+            <li>Go to your Google Drive folder</li>
+            <li>Click the "Share" button</li>
+            <li>Click "Change to anyone with the link"</li>
+            <li>Set permission to "Viewer"</li>
+            <li>Click "Copy link"</li>
+        </ol>
+        <li>Paste the copied link in the field below</li>
+        <li>Book names will be taken from image filenames</li>
+        <li>Image formats: JPG, PNG, GIF</li>
+        <li>You can include price in filename: <code>Book_Name_35.jpg</code></li>
+        <li>Or set a default price for all books below</li>
+    </ol>
+</div>
+                
+                <div class="form-group">
+                    <label for="driveFolderUrl" class="required-field">Google Drive საჯარო ლინკი</label>
+                    <input type="url" id="driveFolderUrl" 
+                           placeholder="https://drive.google.com/drive/folders/..."
+                           required>
+                    <small style="color: var(--gray-color); font-size: 12px;">
+                        მაგალითი: https://drive.google.com/drive/folders/1AbCdEfGhIjKlMnOpQrStUvWxYz
+                    </small>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="defaultPrice">სტანდარტული ფასი (ყველა წიგნისთვის)</label>
+                        <input type="number" id="defaultPrice" min="1" value="35">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="defaultStock">სტანდარტული რაოდენობა</label>
+                        <input type="number" id="defaultStock" min="1" value="1">
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="defaultColor">სტანდარტული ფერი</label>
+                    <select id="defaultColor" class="book-color-select">
+                        <option value="">აირჩიეთ ფერი</option>
+                        <option value="წითელი">წითელი</option>
+                        <option value="ლურჯი">ლურჯი</option>
+                        <option value="მწვანე">მწვანე</option>
+                        <option value="ყვითელი">ყვითელი</option>
+                        <option value="შავი" selected>შავი</option>
+                        <option value="თეთრი">თეთრი</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="defaultDescription">სტანდარტული აღწერა</label>
+                    <textarea id="defaultDescription" placeholder="წიგნის აღწერა...">კოლორირებადი წიგნი. ფერი: შავი</textarea>
+                </div>
+                
+                <div class="preview-section" style="margin-top: 20px; display: none;" id="previewSection">
+                    <h4 style="margin-bottom: 15px; color: var(--dark-color);">წინასწარი ნახვა</h4>
+                    <div id="importPreview" style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; border-radius: 8px; padding: 10px;">
+                        <!-- Preview will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="cancelImport">გაუქმება</button>
+            <button type="button" class="btn-primary" id="previewImportBtn">
+                <i class="fas fa-eye"></i> წინასწარი ნახვა
+            </button>
+            <button type="button" class="btn-edit" id="confirmImportBtn" style="display: none;">
+                <i class="fas fa-download"></i> იმპორტის დაწყება
+            </button>
+        </div>
+    </div>
+</div>
+
     <script>
         // Firebase configuration
         const firebaseConfig = {
@@ -2194,6 +2527,693 @@
         const updateBookBtn = document.getElementById('updateBookBtn');
         const deleteImagesBtn = document.getElementById('deleteImagesBtn');
         
+        // Add to your DOM Elements section
+const importDriveBtn = document.getElementById('importDriveBtn');
+const importDriveModal = document.getElementById('importDriveModal');
+const closeImportModal = document.getElementById('closeImportModal');
+const cancelImport = document.getElementById('cancelImport');
+const previewImportBtn = document.getElementById('previewImportBtn');
+const confirmImportBtn = document.getElementById('confirmImportBtn');
+const driveFolderUrl = document.getElementById('driveFolderUrl');
+const defaultPrice = document.getElementById('defaultPrice');
+const defaultStock = document.getElementById('defaultStock');
+const defaultColor = document.getElementById('defaultColor');
+const defaultDescription = document.getElementById('defaultDescription');
+const previewSection = document.getElementById('previewSection');
+const importPreview = document.getElementById('importPreview');
+
+// Replace the entire import functionality with this:
+
+// DOM Elements for new approach
+const imageLinks = document.getElementById('imageLinks');
+
+// Update previewImportBtn event listener
+previewImportBtn.addEventListener('click', () => {
+    const imageLinksText = imageLinks.value.trim();
+    const folderUrl = driveFolderUrl.value.trim();
+    
+    if (!imageLinksText && !folderUrl) {
+        showError('გთხოვთ შეიყვანოთ ან სურათების ლინკები ან Google Drive ფოლდერის ლინკი');
+        return;
+    }
+    
+    showLoading('წინასწარი ნახვის მომზადება...');
+    
+    if (imageLinksText) {
+        previewFromImageLinks(imageLinksText);
+    } else if (folderUrl) {
+        previewDriveImport();
+    }
+});
+
+// Function to preview from direct image links
+function previewFromImageLinks(linksText) {
+    try {
+        const links = linksText.split('\n').filter(link => link.trim() !== '');
+        const price = parseInt(defaultPrice.value) || 35;
+        const stock = parseInt(defaultStock.value) || 1;
+        const color = defaultColor.value || 'შავი';
+        const description = defaultDescription.value || 'კოლორირებადი წიგნი';
+        
+        displayManualPreview(links, price, stock, color, description);
+        previewSection.style.display = 'block';
+        confirmImportBtn.style.display = 'flex';
+        hideLoading();
+        
+    } catch (error) {
+        hideLoading();
+        showError('შეცდომა ლინკების დამუშავებისას: ' + error.message);
+    }
+}
+
+// Display preview for manual links
+function displayManualPreview(links, price, stock, color, description) {
+    importPreview.innerHTML = '';
+    
+    links.forEach((link, index) => {
+        // Extract filename from URL
+        let filename = 'წიგნი ' + (index + 1);
+        
+        // Try to extract from URL parameters
+        const urlParams = new URL(link);
+        const idParam = urlParams.searchParams.get('id');
+        if (idParam) {
+            filename = `Image_${idParam.substring(0, 8)}`;
+        }
+        
+        // Try to extract price from filename in URL
+        let bookPrice = price;
+        const priceMatch = link.match(/_(\d+)\./);
+        if (priceMatch) {
+            bookPrice = parseInt(priceMatch[1]);
+        }
+        
+        const previewItem = document.createElement('div');
+        previewItem.className = 'import-preview-item';
+        previewItem.innerHTML = `
+            <img src="${link}" alt="${filename}" class="import-preview-image" 
+                 onerror="this.src='https://via.placeholder.com/50x50?text=Image+Error'">
+            <div class="import-preview-info">
+                <div class="import-preview-title">${filename}</div>
+                <div class="import-preview-details">
+                    ფასი: ${bookPrice} ₾ | რაოდენობა: ${stock} | ფერი: ${color}
+                </div>
+                <div style="font-size: 10px; color: #666; margin-top: 3px; word-break: break-all;">
+                    ${link.substring(0, 50)}...
+                </div>
+            </div>
+        `;
+        
+        importPreview.appendChild(previewItem);
+    });
+}
+
+// Function to get image links from folder (simplified version)
+async function getImagesFromFolder(folderId) {
+    // Try multiple approaches to get images
+    const approaches = [
+        // Approach 1: Direct folder view
+        async () => {
+            const url = `https://drive.google.com/embeddedfolderview?id=${folderId}`;
+            const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+            
+            try {
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data.contents, 'text/html');
+                
+                const links = [];
+                doc.querySelectorAll('a').forEach(a => {
+                    const href = a.getAttribute('href');
+                    if (href && href.includes('/file/d/')) {
+                        const match = href.match(/\/file\/d\/([^/]+)/);
+                        if (match) {
+                            links.push(`https://drive.google.com/uc?export=view&id=${match[1]}`);
+                        }
+                    }
+                });
+                
+                return links;
+            } catch (error) {
+                console.log('Approach 1 failed:', error);
+                throw error;
+            }
+        },
+        
+        // Approach 2: Simple API call (may not work without OAuth)
+        async () => {
+            const apiUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'&fields=files(id,name)&key=AIzaSyBnTqafafr2J5wVUY_1UvnbQYkCtRizR50`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                if (data.files && data.files.length > 0) {
+                    return data.files.map(file => 
+                        `https://drive.google.com/uc?export=view&id=${file.id}`
+                    );
+                }
+                throw new Error('No images found');
+            } catch (error) {
+                console.log('Approach 2 failed:', error);
+                throw error;
+            }
+        }
+    ];
+    
+    // Try each approach until one works
+    for (let i = 0; i < approaches.length; i++) {
+        try {
+            const result = await approaches[i]();
+            if (result && result.length > 0) {
+                return result;
+            }
+        } catch (error) {
+            console.log(`Approach ${i + 1} failed:`, error);
+            // Continue to next approach
+        }
+    }
+    
+    throw new Error('Could not retrieve images from folder. Please use the manual image links method instead.');
+}
+
+// Updated confirmDriveImport function
+async function confirmDriveImport() {
+    const imageLinksText = imageLinks.value.trim();
+    const folderUrl = driveFolderUrl.value.trim();
+    
+    showLoading('წიგნების იმპორტი მიმდინარეობს...');
+    
+    try {
+        let imageUrls = [];
+        
+        if (imageLinksText) {
+            // Process manual links
+            imageUrls = imageLinksText.split('\n')
+                .filter(link => link.trim() !== '')
+                .map(link => link.trim());
+        } else if (folderUrl) {
+            // Process folder
+            const folderId = extractFolderIdFromUrl(folderUrl);
+            if (!folderId) {
+                throw new Error('არასწორი Google Drive ლინკი');
+            }
+            
+            imageUrls = await getImagesFromFolder(folderId);
+        } else {
+            throw new Error('გთხოვთ შეიყვანოთ სურათების ლინკები ან Google Drive ფოლდერის ლინკი');
+        }
+        
+        if (imageUrls.length === 0) {
+            throw new Error('სურათები ვერ მოიძებნა');
+        }
+        
+        const price = parseInt(defaultPrice.value) || 35;
+        const stock = parseInt(defaultStock.value) || 1;
+        const color = defaultColor.value || 'შავი';
+        const baseDescription = defaultDescription.value || 'კოლორირებადი წიგნი';
+        
+        let importedCount = 0;
+        let errorCount = 0;
+        
+        // Process each image
+        for (let i = 0; i < imageUrls.length; i++) {
+            try {
+                const imageUrl = imageUrls[i];
+                
+                // Create book title
+                let bookTitle = `წიგნი ${nextBookId}`;
+                
+                // Try to extract price from URL
+                let bookPrice = price;
+                const priceMatch = imageUrl.match(/_(\d+)\./);
+                if (priceMatch) {
+                    bookPrice = parseInt(priceMatch[1]);
+                }
+                
+                // Create description with color
+                const descriptionWithColor = baseDescription.includes('ფერი:') ? 
+                    baseDescription : `${baseDescription}. ფერი: ${color}`;
+                
+                // Create new book
+                const newBook = {
+                    id: nextBookId,
+                    title: bookTitle,
+                    color: color,
+                    description: descriptionWithColor,
+                    stock: stock,
+                    initialStock: stock,
+                    price: bookPrice,
+                    images: [imageUrl],
+                    sold: 0,
+                    lastSold: null
+                };
+                
+                // Add to books array
+                books.push(newBook);
+                
+                // Add to sales history
+                salesHistory.push({
+                    bookId: nextBookId,
+                    title: bookTitle,
+                    images: [imageUrl],
+                    sold: 0,
+                    stock: stock,
+                    initialStock: stock,
+                    revenue: 0,
+                    lastSold: null
+                });
+                
+                nextBookId++;
+                importedCount++;
+                
+            } catch (error) {
+                console.error(`Error importing image ${i + 1}:`, error);
+                errorCount++;
+            }
+        }
+        
+        // Save all imported books
+        const saveSuccess = await saveData();
+        
+        if (saveSuccess) {
+            // Update UI
+            renderBooks(books);
+            importDriveModal.style.display = 'none';
+            
+            hideLoading();
+            showSuccess(`${importedCount} წიგნი წარმატებით იმპორტირდა!${errorCount > 0 ? ` ${errorCount} ფაილის იმპორტი ვერ მოხერხდა.` : ''}`);
+        } else {
+            hideLoading();
+            showError('წიგნების შენახვა ვერ მოხერხდა');
+        }
+        
+    } catch (error) {
+        console.error('Error importing:', error);
+        hideLoading();
+        showError('იმპორტი ვერ მოხერხდა: ' + error.message);
+    }
+}
+
+// Add to setupEventListeners()
+importDriveBtn.addEventListener('click', () => {
+    importDriveModal.style.display = 'flex';
+    driveFolderUrl.value = '';
+    previewSection.style.display = 'none';
+    confirmImportBtn.style.display = 'none';
+});
+
+closeImportModal.addEventListener('click', () => {
+    importDriveModal.style.display = 'none';
+});
+
+cancelImport.addEventListener('click', () => {
+    importDriveModal.style.display = 'none';
+});
+
+previewImportBtn.addEventListener('click', previewDriveImport);
+confirmImportBtn.addEventListener('click', confirmDriveImport);
+
+// Add this temporary function to get links from your folder
+async function getLinksFromMyFolder() {
+    // Your folder ID
+    const folderId = '1rX7g_1bHqhnxZGeSD34VwiGkVLRpsvV_';
+    
+    showLoading('სურათების მოძიება...');
+    
+    try {
+        // This is a workaround - we'll use the folder viewer
+        const viewerUrl = `https://drive.google.com/embeddedfolderview?id=${folderId}`;
+        
+        // Use a CORS proxy
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(viewerUrl)}`;
+        const response = await fetch(proxyUrl);
+        const data = await response.json();
+        
+        // Parse the HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, 'text/html');
+        
+        // Extract image links
+        const links = [];
+        const imageElements = doc.querySelectorAll('img[src*="drive.google.com"]');
+        
+        imageElements.forEach(img => {
+            const src = img.src;
+            // Extract file ID from src
+            const match = src.match(/id=([^&]+)/);
+            if (match) {
+                const directLink = `https://drive.google.com/uc?export=view&id=${match[1]}`;
+                links.push(directLink);
+            }
+        });
+        
+        hideLoading();
+        
+        if (links.length > 0) {
+            // Fill the textarea with links
+            imageLinks.value = links.join('\n');
+            showSuccess(`ნაპოვნია ${links.length} სურათი!`);
+        } else {
+            showError('სურათები ვერ მოიძებნა');
+        }
+        
+    } catch (error) {
+        hideLoading();
+        showError('შეცდომა: ' + error.message);
+    }
+}
+
+// Add this button to test your folder
+const testFolderBtn = document.createElement('button');
+testFolderBtn.textContent = 'Test My Folder';
+testFolderBtn.className = 'btn-secondary';
+testFolderBtn.style.marginTop = '10px';
+testFolderBtn.onclick = getLinksFromMyFolder;
+
+// Add it to the modal (you can add this dynamically)
+const modalBody = document.querySelector('#importDriveModal .modal-body');
+const instructionsDiv = modalBody.querySelector('.drive-import-instructions');
+instructionsDiv.insertBefore(testFolderBtn, instructionsDiv.querySelector('.preview-section'));
+// Google Drive Import Functions
+async function previewDriveImport() {
+    const url = driveFolderUrl.value.trim();
+    
+    if (!url) {
+        showError('გთხოვთ შეიყვანოთ Google Drive ლინკი');
+        return;
+    }
+    
+    showLoading('Google Drive-დან მონაცემების მიღება...');
+    
+    try {
+        // Extract folder ID from URL
+        const folderId = extractFolderIdFromUrl(url);
+        if (!folderId) {
+            throw new Error('არასწორი Google Drive ლინკი');
+        }
+        
+        // Get files from Google Drive
+        const files = await getDriveFolderContents(folderId);
+        
+        if (files.length === 0) {
+            throw new Error('ფოლდერი ცარიელია ან არ არსებობს');
+        }
+        
+        // Display preview
+        displayImportPreview(files);
+        previewSection.style.display = 'block';
+        confirmImportBtn.style.display = 'flex';
+        
+        hideLoading();
+        
+    } catch (error) {
+        console.error('Error previewing Drive import:', error);
+        hideLoading();
+        showError(error.message || 'Google Drive-დან მონაცემების მიღება ვერ მოხერხდა');
+    }
+}
+
+function extractFolderIdFromUrl(url) {
+    // Handle different Google Drive URL formats
+    const patterns = [
+        /drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/,
+        /drive\.google\.com\/drive\/u\/\d+\/folders\/([a-zA-Z0-9_-]+)/,
+        /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/,
+        /\/folders\/([a-zA-Z0-9_-]+)/,
+        /id=([a-zA-Z0-9_-]+)/
+    ];
+    
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+            return match[1];
+        }
+    }
+    
+    // If no pattern matches, try to extract from the end of the URL
+    const parts = url.split('/');
+    for (let i = parts.length - 1; i >= 0; i--) {
+        if (parts[i] && parts[i].length > 10 && !parts[i].includes('.')) {
+            return parts[i].replace('?usp=sharing', '').replace('?usp=drive_link', '');
+        }
+    }
+    
+    return null;
+}
+
+// CORS proxy helper function
+async function fetchWithCors(url) {
+    try {
+        // Try direct fetch first
+        const response = await fetch(url);
+        if (response.ok) return response;
+    } catch (error) {
+        console.log('Direct fetch failed, trying CORS proxy...');
+    }
+    
+    // Use CORS proxy as fallback
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const response = await fetch(proxyUrl);
+    const data = await response.json();
+    
+    if (data.contents) {
+        return {
+            ok: true,
+            json: () => Promise.resolve(JSON.parse(data.contents))
+        };
+    }
+    
+    throw new Error('Failed to fetch with CORS proxy');
+}
+
+// Replace the getDriveFolderContents function with this simpler version
+async function getDriveFolderContents(folderId) {
+    // Alternative approach - use Google Drive folder viewer
+    const viewerUrl = `https://drive.google.com/embeddedfolderview?id=${folderId}#list`;
+    
+    try {
+        // This approach uses a workaround since direct API access might be restricted
+        // We'll create a simple HTML parser to get image information
+        const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(viewerUrl)}`);
+        const html = await response.text();
+        
+        // Parse the HTML to extract image information
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Extract image elements
+        const imageElements = doc.querySelectorAll('.flip-entry');
+        
+        const files = [];
+        imageElements.forEach(element => {
+            const titleElement = element.querySelector('.flip-entry-title');
+            const imageElement = element.querySelector('img');
+            
+            if (titleElement && imageElement) {
+                const name = titleElement.textContent.trim();
+                const imageUrl = imageElement.src;
+                
+                // Extract file ID from image URL
+                const match = imageUrl.match(/id=([^&]+)/);
+                if (match) {
+                    files.push({
+                        id: match[1],
+                        name: name,
+                        webContentLink: `https://drive.google.com/uc?export=view&id=${match[1]}`,
+                        thumbnailLink: imageUrl
+                    });
+                }
+            }
+        });
+        
+        if (files.length === 0) {
+            throw new Error('No images found in the folder or folder is not public');
+        }
+        
+        return files;
+        
+    } catch (error) {
+        console.error('Error fetching Drive folder:', error);
+        
+        // Fallback: Try using the Google Drive API with a different approach
+        try {
+            const apiUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'+and+trashed=false&fields=files(id,name,mimeType)&key=AIzaSyBnTqafafr2J5wVUY_1UvnbQYkCtRizR50`;
+            
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+            
+            if (!data.files || data.files.length === 0) {
+                throw new Error('Folder is not publicly accessible. Please make sure to share the folder publicly with "Anyone with the link can view" permission.');
+            }
+            
+            // Convert to the expected format
+            return data.files.map(file => ({
+                id: file.id,
+                name: file.name,
+                webContentLink: `https://drive.google.com/uc?export=view&id=${file.id}`,
+                thumbnailLink: `https://drive.google.com/thumbnail?id=${file.id}&sz=w100`
+            }));
+            
+        } catch (apiError) {
+            console.error('API error:', apiError);
+            throw new Error('Please make sure your Google Drive folder is shared publicly. Go to the folder, click "Share", then "Change to anyone with the link".');
+        }
+    }
+}
+
+function displayImportPreview(files) {
+    importPreview.innerHTML = '';
+    
+    const price = parseInt(defaultPrice.value) || 35;
+    const stock = parseInt(defaultStock.value) || 1;
+    const color = defaultColor.value || 'შავი';
+    const description = defaultDescription.value || 'კოლორირებადი წიგნი';
+    
+    files.forEach(file => {
+        // Extract book title from filename (remove extension and price if present)
+        let bookTitle = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+        
+        // Try to extract price from filename (e.g., "BookName_35.jpg")
+        let bookPrice = price;
+        const priceMatch = bookTitle.match(/_(\d+)$/);
+        if (priceMatch) {
+            bookPrice = parseInt(priceMatch[1]);
+            bookTitle = bookTitle.replace(/_(\d+)$/, '');
+        }
+        
+        // Replace underscores with spaces
+        bookTitle = bookTitle.replace(/_/g, ' ').trim();
+        
+        // Create direct image link for Google Drive
+        const directImageLink = `https://drive.google.com/uc?export=view&id=${file.id}`;
+        
+        const previewItem = document.createElement('div');
+        previewItem.className = 'import-preview-item';
+        previewItem.innerHTML = `
+            <img src="${directImageLink}" alt="${bookTitle}" class="import-preview-image">
+            <div class="import-preview-info">
+                <div class="import-preview-title">${bookTitle}</div>
+                <div class="import-preview-details">
+                    ფასი: ${bookPrice} ₾ | რაოდენობა: ${stock} | ფერი: ${color}
+                </div>
+            </div>
+        `;
+        
+        importPreview.appendChild(previewItem);
+    });
+}
+
+async function confirmDriveImport() {
+    const url = driveFolderUrl.value.trim();
+    const folderId = extractFolderIdFromUrl(url);
+    
+    if (!folderId) {
+        showError('არასწორი Google Drive ლინკი');
+        return;
+    }
+    
+    showLoading('წიგნების იმპორტი მიმდინარეობს...');
+    
+    try {
+        const files = await getDriveFolderContents(folderId);
+        const price = parseInt(defaultPrice.value) || 35;
+        const stock = parseInt(defaultStock.value) || 1;
+        const color = defaultColor.value || 'შავი';
+        const baseDescription = defaultDescription.value || 'კოლორირებადი წიგნი';
+        
+        let importedCount = 0;
+        let errorCount = 0;
+        
+        // Process each image file
+        for (const file of files) {
+            try {
+                // Extract book title from filename
+                let bookTitle = file.name.replace(/\.[^/.]+$/, "");
+                
+                // Try to extract price from filename
+                let bookPrice = price;
+                const priceMatch = bookTitle.match(/_(\d+)$/);
+                if (priceMatch) {
+                    bookPrice = parseInt(priceMatch[1]);
+                    bookTitle = bookTitle.replace(/_(\d+)$/, '');
+                }
+                
+                // Clean up title
+                bookTitle = bookTitle.replace(/_/g, ' ').trim();
+                
+                if (!bookTitle) {
+                    bookTitle = `წიგნი ${nextBookId}`;
+                }
+                
+                // Create description with color
+                const descriptionWithColor = baseDescription.includes('ფერი:') ? 
+                    baseDescription : `${baseDescription}. ფერი: ${color}`;
+                
+                // Create direct image link
+                const directImageLink = `https://drive.google.com/uc?export=view&id=${file.id}`;
+                
+                // Create new book
+                const newBook = {
+                    id: nextBookId,
+                    title: bookTitle,
+                    color: color,
+                    description: descriptionWithColor,
+                    stock: stock,
+                    initialStock: stock,
+                    price: bookPrice,
+                    images: [directImageLink],
+                    sold: 0,
+                    lastSold: null
+                };
+                
+                // Add to books array
+                books.push(newBook);
+                
+                // Add to sales history
+                salesHistory.push({
+                    bookId: nextBookId,
+                    title: bookTitle,
+                    images: [directImageLink],
+                    sold: 0,
+                    stock: stock,
+                    initialStock: stock,
+                    revenue: 0,
+                    lastSold: null
+                });
+                
+                nextBookId++;
+                importedCount++;
+                
+            } catch (error) {
+                console.error(`Error importing file ${file.name}:`, error);
+                errorCount++;
+            }
+        }
+        
+        // Save all imported books
+        const saveSuccess = await saveData();
+        
+        if (saveSuccess) {
+            // Update UI
+            renderBooks(books);
+            importDriveModal.style.display = 'none';
+            
+            hideLoading();
+            showSuccess(`${importedCount} წიგნი წარმატებით იმპორტირდა!${errorCount > 0 ? ` ${errorCount} ფაილის იმპორტი ვერ მოხერხდა.` : ''}`);
+        } else {
+            hideLoading();
+            showError('წიგნების შენახვა ვერ მოხერხდა');
+        }
+        
+    } catch (error) {
+        console.error('Error importing from Drive:', error);
+        hideLoading();
+        showError('იმპორტი ვერ მოხერხდა: ' + error.message);
+    }
+}
+
         // Initialize the app
         async function initApp() {
             // Show loading overlay
