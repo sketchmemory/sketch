@@ -99,6 +99,44 @@
             animation: fadeInUp 0.8s ease-out;
         }
         
+        /* Add this to the CSS section */
+.image-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    cursor: pointer;
+}
+
+.image-popup-content {
+    max-width: 90%;
+    max-height: 90%;
+    position: relative;
+}
+
+.image-popup-content img {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+}
+
+.close-popup {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+}
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -286,13 +324,12 @@
             color: white;
         }
         
-        /* Content Area */
-        .content {
-            padding: 20px;
-            max-width: 1600px;
-            margin: 0 auto;
-            width: 100%;
-        }
+.content {
+    padding: 20px 2cm; /* Add 2cm left and right padding */
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+}
         
         /* Actions Bar */
         .actions-bar {
@@ -2406,23 +2443,26 @@
             });
             
             // Delete all images button
-            deleteImagesBtn.addEventListener('click', () => {
-                if (confirm('დარწმუნებული ხართ, რომ გსურთ ყველა ფოტოს წაშლა?')) {
-                    editSelectedImages = [];
-                    editImagePreview.innerHTML = '';
-                    editImageError.style.display = 'block';
-                }
-            });
-            
-            // Close modals when clicking outside
-            window.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal')) {
-                    e.target.style.display = 'none';
-                    if (e.target.id === 'confirmationModal') {
-                        bookToDelete = null;
-                    }
-                }
-            });
+deleteImagesBtn.addEventListener('click', () => {
+    // Show confirmation popup
+    confirmationTitle.textContent = 'ფოტოების წაშლა';
+    confirmationMessage.textContent = 'დარწმუნებული ხართ, რომ გსურთ ყველა ფოტოს წაშლა?';
+    confirmAction.textContent = 'დიახ, წაშლა';
+    
+    // Set up confirmation action
+    const handleDeleteConfirm = () => {
+        editSelectedImages = [];
+        editImagePreview.innerHTML = '';
+        editImageError.style.display = 'block';
+        confirmationModal.style.display = 'none';
+        
+        // Remove event listener to prevent multiple bindings
+        confirmAction.removeEventListener('click', handleDeleteConfirm);
+    };
+    
+    confirmAction.addEventListener('click', handleDeleteConfirm);
+    confirmationModal.style.display = 'flex';
+});
         }
         
         // Load data from Firebase or localStorage
@@ -2578,53 +2618,16 @@
             }
         }
         
-        // Initialize with sample data
-        async function initializeSampleData() {
-            books = [
-                {
-                    id: 1,
-                    title: "ქართული ლიტერატურა",
-                    color: "წითელი",
-                    description: "ქართული ლიტერატურის ისტორია უძველესი დროიდან დღემდე. ფერი: წითელი",
-                    stock: 12,
-                    initialStock: 20,
-                    price: 35,
-                    images: ["https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600&h=400&fit=crop"],
-                    sold: 8,
-                    lastSold: "2023-10-15"
-                },
-                {
-                    id: 2,
-                    title: "ფიზიკა",
-                    color: "ლურჯი",
-                    description: "საშუალო სკოლის ფიზიკის სახელმძღვანელო. ფერი: ლურჯი",
-                    stock: 8,
-                    initialStock: 15,
-                    price: 35,
-                    images: ["https://images.unsplash.com/photo-1509228468518-180dd4864904?w=600&h=400&fit=crop"],
-                    sold: 7,
-                    lastSold: "2023-11-05"
-                }
-            ];
-            
-            // Initialize sales history from books
-            salesHistory = books.map(book => ({
-                bookId: book.id,
-                title: book.title,
-                images: book.images,
-                sold: book.sold || 0,
-                stock: book.stock,
-                initialStock: book.initialStock,
-                revenue: (book.sold || 0) * book.price,
-                lastSold: book.lastSold || new Date().toISOString().split('T')[0]
-            }));
-            
-            nextBookId = books.length + 1;
-            
-            // Save initial data
-            await saveData();
-            renderBooks(books);
-        }
+// Initialize with empty data
+async function initializeSampleData() {
+    books = []; // Empty array - no default books
+    salesHistory = [];
+    nextBookId = 1;
+    
+    // Save initial data
+    await saveData();
+    renderBooks(books);
+}
         
         // Save data to Firebase and localStorage
         async function saveData() {
@@ -2747,30 +2750,25 @@
                 
                 const soldCount = book.sold || 0;
                 
-                bookCard.innerHTML = `
-                    <div class="book-image-container">
-                        <img src="${book.images[0]}" alt="${book.title}" class="book-image">
-                        ${soldCount > 5 ? `<div class="book-badge">პოპულარული</div>` : ''}
-                    </div>
-                    <div class="book-info">
-                        <h3 class="book-title">${book.title}</h3>
-                        <p class="book-description">${book.description}</p>
-                        <div class="book-footer">
-                            <div>
-                                <div class="book-stock">მარაგში: ${book.stock}</div>
-                                <div class="book-price">${book.price} ₾</div>
-                            </div>
-                            <div class="book-actions">
-                                <button class="edit-btn">
-                                    <i class="fas fa-edit"></i> რედაქტირება
-                                </button>
-                                <button class="sell-btn" ${book.stock <= 0 ? 'disabled' : ''}>
-                                    ${book.stock <= 0 ? 'მარაგი ამოიწურა' : 'გაყიდვა'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
+bookCard.innerHTML = `
+    <div class="book-image-container">
+        <img src="${book.images[0]}" alt="${book.title}" class="book-image">
+        ${soldCount > 5 ? `<div class="book-badge">პოპულარული</div>` : ''}
+    </div>
+    <div class="book-info">
+        <h3 class="book-title">${book.title}</h3>
+        <p class="book-description">${book.description}</p>
+        <div class="book-footer">
+            <div>
+                <div class="book-stock">მარაგში: ${book.stock}</div>
+                <div class="book-price">${book.price} ₾</div>
+            </div>
+            <button class="sell-btn" ${book.stock <= 0 ? 'disabled' : ''}>
+                ${book.stock <= 0 ? 'მარაგი ამოიწურა' : 'გაყიდვა'}
+            </button>
+        </div>
+    </div>
+`;
                 
                 // Add event listeners
                 bookCard.addEventListener('click', (e) => {
@@ -2788,11 +2786,6 @@
                     }
                 });
                 
-                const editBtn = bookCard.querySelector('.edit-btn');
-                editBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    openEditBook(book.id);
-                });
                 
                 booksGrid.appendChild(bookCard);
             });
@@ -2817,105 +2810,163 @@
         }
         
         // Open book details
-        function openBookDetails(bookId) {
-            const book = books.find(b => b.id === bookId);
-            if (!book) return;
+function openBookDetails(bookId) {
+    const book = books.find(b => b.id === bookId);
+    if (!book) return;
+    
+    currentBookId = bookId;
+    
+    const soldCount = book.sold || 0;
+    const revenue = soldCount * book.price;
+    
+    const detailsContent = document.getElementById('bookDetailsContent');
+    detailsContent.innerHTML = `
+        <div class="book-details-images">
+            <img src="${book.images[0]}" alt="${book.title}" class="book-details-main-image" id="mainBookImage" style="cursor: pointer;">
+            <div class="book-details-thumbnails">
+                ${book.images.map((img, index) => `
+                    <img src="${img}" alt="${book.title} - სურათი ${index+1}" 
+                         class="book-thumbnail ${index === 0 ? 'active' : ''}" 
+                         data-index="${index}"
+                         style="cursor: pointer;">
+                `).join('')}
+            </div>
+        </div>
+        <div class="book-details-info">
+            <h2 class="book-details-title">${book.title}</h2>
+            <p class="book-details-description">${book.description}</p>
             
-            currentBookId = bookId;
-            
-            const soldCount = book.sold || 0;
-            const revenue = soldCount * book.price;
-            
-            const detailsContent = document.getElementById('bookDetailsContent');
-            detailsContent.innerHTML = `
-                <div class="book-details-images">
-                    <img src="${book.images[0]}" alt="${book.title}" class="book-details-main-image" id="mainBookImage" style="cursor: pointer;">
-                    <div class="book-details-thumbnails">
-                        ${book.images.map((img, index) => `
-                            <img src="${img}" alt="${book.title} - სურათი ${index+1}" 
-                                 class="book-thumbnail ${index === 0 ? 'active' : ''}" 
-                                 data-index="${index}"
-                                 style="cursor: pointer;">
-                        `).join('')}
-                    </div>
+            <div class="book-details-stats">
+                <div class="details-stat">
+                    <div class="details-stat-label">მარაგში</div>
+                    <div class="details-stat-value">${book.stock}</div>
                 </div>
-                <div class="book-details-info">
-                    <h2 class="book-details-title">${book.title}</h2>
-                    <p class="book-details-description">${book.description}</p>
-                    
-                    <div class="book-details-stats">
-                        <div class="details-stat">
-                            <div class="details-stat-label">მარაგში</div>
-                            <div class="details-stat-value">${book.stock}</div>
-                        </div>
-                        <div class="details-stat">
-                            <div class="details-stat-label">გაყიდული</div>
-                            <div class="details-stat-value">${soldCount}</div>
-                        </div>
-                        <div class="details-stat">
-                            <div class="details-stat-label">ფასი</div>
-                            <div class="details-stat-value">${book.price} ₾</div>
-                        </div>
-                        <div class="details-stat">
-                            <div class="details-stat-label">შემოსავალი ამ წიგნიდან</div>
-                            <div class="details-stat-value income">${revenue} ₾</div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 20px; display: flex; gap: 10px;">
-                        <button class="btn-edit" id="editBookFromDetailsBtn">
-                            <i class="fas fa-edit"></i> რედაქტირება
-                        </button>
-                        <button class="btn-secondary" id="updateStockBtn">
-                            <i class="fas fa-boxes"></i> მარაგის განახლება
-                        </button>
-                    </div>
+                <div class="details-stat">
+                    <div class="details-stat-label">გაყიდული</div>
+                    <div class="details-stat-value">${soldCount}</div>
                 </div>
-            `;
+                <div class="details-stat">
+                    <div class="details-stat-label">ფასი</div>
+                    <div class="details-stat-value">${book.price} ₾</div>
+                </div>
+                <div class="details-stat">
+                    <div class="details-stat-label">შემოსავალი ამ წიგნიდან</div>
+                    <div class="details-stat-value income">${revenue} ₾</div>
+                </div>
+            </div>
             
-            // Add event listeners to thumbnails
-            const thumbnails = detailsContent.querySelectorAll('.book-thumbnail');
-            const mainImage = document.getElementById('mainBookImage');
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button class="btn-edit" id="editBookFromDetailsBtn">
+                    <i class="fas fa-edit"></i> რედაქტირება
+                </button>
+                <button class="btn-secondary" id="updateStockBtn">
+                    <i class="fas fa-boxes"></i> მარაგის განახლება
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Add event listeners to thumbnails
+    const thumbnails = detailsContent.querySelectorAll('.book-thumbnail');
+    const mainImage = document.getElementById('mainBookImage');
+    
+    thumbnails.forEach(thumb => {
+        thumb.addEventListener('click', () => {
+            thumbnails.forEach(t => t.classList.remove('active'));
+            thumb.classList.add('active');
+            mainImage.src = thumb.src;
             
-            thumbnails.forEach(thumb => {
-                thumb.addEventListener('click', () => {
-                    thumbnails.forEach(t => t.classList.remove('active'));
-                    thumb.classList.add('active');
-                    mainImage.src = thumb.src;
-                });
-                
-                // Click to open image in new tab
-                thumb.addEventListener('dblclick', () => {
-                    window.open(thumb.src, '_blank');
-                });
-            });
-            
-            // Click main image to open in new tab
-            mainImage.addEventListener('click', () => {
-                window.open(mainImage.src, '_blank');
-            });
-            
-            // Update stock button
-            const updateStockBtn = detailsContent.querySelector('#updateStockBtn');
-            updateStockBtn.addEventListener('click', () => {
-                const book = books.find(b => b.id === currentBookId);
-                if (book) {
-                    document.getElementById('currentStock').value = book.stock;
-                    document.getElementById('newStock').value = book.stock;
-                    updateStockModal.style.display = 'flex';
-                    bookDetailsModal.style.display = 'none';
-                }
-            });
-            
-            // Edit button in details
-            const editBookFromDetailsBtn = detailsContent.querySelector('#editBookFromDetailsBtn');
-            editBookFromDetailsBtn.addEventListener('click', () => {
-                bookDetailsModal.style.display = 'none';
-                openEditBook(bookId);
-            });
-            
-            bookDetailsModal.style.display = 'flex';
+            // Open popup on click
+            createImagePopup(thumb.src);
+        });
+    });
+    
+    // Click main image to open popup
+    mainImage.addEventListener('click', () => {
+        createImagePopup(mainImage.src);
+    });
+    
+    // Function to create image popup
+    function createImagePopup(src) {
+        const popup = document.createElement('div');
+        popup.className = 'image-popup';
+        popup.innerHTML = `
+            <div class="image-popup-content">
+                <button class="close-popup">&times;</button>
+                <img src="${src}" alt="Full size image">
+            </div>
+        `;
+        
+        popup.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            cursor: pointer;
+        `;
+        
+        const content = popup.querySelector('.image-popup-content');
+        content.style.cssText = `
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        `;
+        
+        const img = popup.querySelector('img');
+        img.style.cssText = `
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        `;
+        
+        const closeBtn = popup.querySelector('.close-popup');
+        closeBtn.style.cssText = `
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        `;
+        
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup || e.target === closeBtn) {
+                document.body.removeChild(popup);
+            }
+        });
+        
+        document.body.appendChild(popup);
+    }
+    
+    // Update stock button
+    const updateStockBtn = detailsContent.querySelector('#updateStockBtn');
+    updateStockBtn.addEventListener('click', () => {
+        const book = books.find(b => b.id === currentBookId);
+        if (book) {
+            document.getElementById('currentStock').value = book.stock;
+            document.getElementById('newStock').value = book.stock;
+            updateStockModal.style.display = 'flex';
+            bookDetailsModal.style.display = 'none';
         }
+    });
+    
+    // Edit button in details
+    const editBookFromDetailsBtn = detailsContent.querySelector('#editBookFromDetailsBtn');
+    editBookFromDetailsBtn.addEventListener('click', () => {
+        bookDetailsModal.style.display = 'none';
+        openEditBook(bookId);
+    });
+    
+    bookDetailsModal.style.display = 'flex';
+}
         
         // Open edit book modal
         function openEditBook(bookId) {
@@ -3191,10 +3242,19 @@
                 hideLoading();
                 showSuccess(`"${title}" წარმატებით დაემატა!`);
                 
-            } catch (error) {
-                console.error('Error adding book:', error);
-                hideLoading();
-                showError('წიგნის დამატება ვერ მოხერხდა');
+// After the try-catch block in handleAddBook(), add:
+} catch (error) {
+    console.error('Error adding book:', error);
+    hideLoading();
+    
+    // More specific error messages
+    if (error.message.includes('storage')) {
+        showError('ფოტოების ატვირთვა ვერ მოხერხდა. გთხოვთ სცადოთ სხვა სურათი.');
+    } else if (error.message.includes('permission') || error.code === 'PERMISSION_DENIED') {
+        showError('სისტემის შეცდომა. გთხოვთ სცადოთ მოგვიანებით.');
+    } else {
+        showError('წიგნის დამატება ვერ მოხერხდა');
+    }
             } finally {
                 // Re-enable submit button
                 submitBookBtn.disabled = false;
