@@ -2229,6 +2229,25 @@
         const editUploadProgress = document.getElementById('
         const editProgressFill = document.getElementById('editProgressFill');
         const editProgressText = document.getElementById('editProgressText');
+
+        // Debug function to check if elements exist
+function checkElements() {
+    console.log('Checking elements...');
+    console.log('loginPage exists:', !!loginPage);
+    console.log('mainPage exists:', !!mainPage);
+    console.log('loadingOverlay exists:', !!loadingOverlay);
+    
+    // Check if event listeners are working
+    if (loginBtn) {
+        console.log('Login button exists, adding test listener');
+        loginBtn.addEventListener('click', function() {
+            console.log('Login button clicked!');
+        });
+    }
+}
+
+// Call this after DOM loads
+document.addEventListener('DOMContentLoaded', checkElements);
         
      async function initApp() {
     console.log('App initializing...');
