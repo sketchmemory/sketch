@@ -2525,67 +2525,59 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        // Load data from Firebase or localStorage
-// Load data from Firebase or localStorage
 async function loadData() {
     try {
         showLoading('მონაცემების ჩატვირთვა...');
         
-        // Clear existing data
-        books = [];
-        salesHistory = [];
-        
-        // Load data from Firebase
-        const booksRef = database.ref('books');
-        const salesRef = database.ref('sales');
-        const nextIdRef = database.ref('nextBookId');
-        
-        // Use Promise.all to load all data at once
+        // Load data from Firebase as primary source
         const [booksSnapshot, salesSnapshot, nextIdSnapshot] = await Promise.all([
-            booksRef.once('value'),
-            salesRef.once('value'),
-            nextIdRef.once('value')
+            database.ref('books').once('value'),
+            database.ref('sales').once('value'),
+            database.ref('nextBookId').once('value')
         ]);
         
+        // Process books data from Firebase
         const booksData = booksSnapshot.val();
-        const salesData = salesSnapshot.val();
-        const nextIdData = nextIdSnapshot.val();
-        
-        // Process books data
         if (booksData) {
             // Convert Firebase object to array
             books = Object.values(booksData);
             console.log('Loaded books from Firebase:', books.length);
+        } else {
+            books = [];
         }
         
-        // Process sales data
+        // Process sales data from Firebase
+        const salesData = salesSnapshot.val();
         if (salesData) {
             salesHistory = Object.values(salesData);
             console.log('Loaded sales from Firebase:', salesHistory.length);
-        }
-        
-        // Process next ID
-        if (nextIdData) {
-            nextBookId = nextIdData;
         } else {
-            nextBookId = books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1;
-            // Save nextBookId to Firebase if it doesn't exist
-            await database.ref('nextBookId').set(nextBookId);
-        }
-        
-        // If no data, initialize with empty arrays
-        if (books.length === 0) {
-            books = [];
             salesHistory = [];
-            nextBookId = 1;
-            
-            // Save initial empty state
-            await database.ref('books').set({});
-            await database.ref('sales').set({});
-            await database.ref('nextBookId').set(1);
         }
         
-        // Also update localStorage with Firebase data
+        // Process next ID from Firebase
+        const nextIdData = nextIdSnapshot.val();
+        nextBookId = nextIdData || 1;
+        
+        // If Firebase has no data, check localStorage as backup
+        if (books.length === 0 && salesHistory.length === 0) {
+            console.log('No data in Firebase, checking localStorage...');
+            const savedBooks = localStorage.getItem('bookmaster_books');
+            const savedSales = localStorage.getItem('bookmaster_sales');
+            const savedNextId = localStorage.getItem('bookmaster_nextId');
+            
+            if (savedBooks && savedSales) {
+                books = JSON.parse(savedBooks);
+                salesHistory = JSON.parse(savedSales);
+                nextBookId = parseInt(savedNextId) || (books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1);
+                
+                // Save localStorage data to Firebase
+                await saveDataToFirebase();
+                console.log('Migrated localStorage data to Firebase');
+            }
+        }
+        
+        // Always update localStorage as cache
         localStorage.setItem('bookmaster_books', JSON.stringify(books));
         localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
         localStorage.setItem('bookmaster_nextId', nextBookId.toString());
@@ -2598,7 +2590,7 @@ async function loadData() {
     } catch (error) {
         console.error('Error loading from Firebase:', error);
         
-        // Try loading from localStorage as fallback
+        // Fallback to localStorage only if Firebase fails
         try {
             const savedBooks = localStorage.getItem('bookmaster_books');
             const savedSales = localStorage.getItem('bookmaster_sales');
@@ -2610,9 +2602,8 @@ async function loadData() {
                 nextBookId = parseInt(savedNextId) || (books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1);
                 renderBooks(books);
                 hideLoading();
-                showSuccess('მონაცემები ჩაიტვირთა ლოკალურად');
+                showWarning('მონაცემები ჩაიტვირთა ლოკალურად (Firebase შეცდომა)');
             } else {
-                // Initialize with empty data
                 books = [];
                 salesHistory = [];
                 nextBookId = 1;
@@ -2630,6 +2621,36 @@ async function loadData() {
     }
 }
         
+        // Save data only to Firebase
+async function saveDataToFirebase() {
+    try {
+        console.log('Saving data to Firebase...');
+        
+        // Convert arrays to objects for Firebase
+        const booksObj = {};
+        books.forEach(book => {
+            booksObj[book.id] = book;
+        });
+        
+        const salesObj = {};
+        salesHistory.forEach(sale => {
+            salesObj[sale.bookId] = sale;
+        });
+        
+        // Save to Firebase
+        await database.ref('books').set(booksObj);
+        await database.ref('sales').set(salesObj);
+        await database.ref('nextBookId').set(nextBookId);
+        
+        console.log('Data saved to Firebase successfully');
+        return true;
+        
+    } catch (error) {
+        console.error('Error saving to Firebase:', error);
+        return false;
+    }
+}
+
         // Load from localStorage
         function loadFromLocalStorage() {
             try {
@@ -2715,57 +2736,42 @@ if (window.location.hostname === 'localhost' || window.location.hostname === '12
     document.body.appendChild(testBtn);
 }
 
-        // Save data to Firebase and localStorage
-        async function saveData() {
-            try {
-                console.log('Saving data...');
-                
-                // Convert arrays to objects for Firebase
-                const booksObj = {};
-                books.forEach(book => {
-                    booksObj[book.id] = book;
-                });
-                
-                const salesObj = {};
-                salesHistory.forEach(sale => {
-                    salesObj[sale.bookId] = sale;
-                });
-                
-                // Save to Firebase
-                await database.ref('books').set(booksObj);
-                await database.ref('sales').set(salesObj);
-                await database.ref('nextBookId').set(nextBookId);
-                
-                console.log('Data saved to Firebase successfully');
-                
-                // Also save to localStorage as backup
-                localStorage.setItem('bookmaster_books', JSON.stringify(books));
-                localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-                localStorage.setItem('bookmaster_nextId', nextBookId.toString());
-                
-                console.log('Data saved to localStorage successfully');
-                
-                return true;
-                
-            } catch (error) {
-                console.error('Error saving to Firebase:', error);
-                
-                try {
-                    // Fallback to localStorage only
-                    localStorage.setItem('bookmaster_books', JSON.stringify(books));
-                    localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-                    localStorage.setItem('bookmaster_nextId', nextBookId.toString());
-                    
-                    console.log('Data saved to localStorage only');
-                    showWarning('მონაცემები შენახულია მხოლოდ ლოკალურად');
-                    return true;
-                } catch (localError) {
-                    console.error('Error saving to localStorage:', localError);
-                    showError('მონაცემების შენახვა ვერ მოხერხდა');
-                    return false;
-                }
-            }
+async function saveData() {
+    try {
+        // First save to Firebase
+        const firebaseSuccess = await saveDataToFirebase();
+        
+        if (!firebaseSuccess) {
+            throw new Error('Firebase save failed');
         }
+        
+        // Also save to localStorage as backup/cache
+        localStorage.setItem('bookmaster_books', JSON.stringify(books));
+        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+        localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+        
+        console.log('Data saved successfully (Firebase + localStorage)');
+        return true;
+        
+    } catch (error) {
+        console.error('Error saving data:', error);
+        
+        try {
+            // Fallback to localStorage only
+            localStorage.setItem('bookmaster_books', JSON.stringify(books));
+            localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+            localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+            
+            console.log('Data saved to localStorage only');
+            showWarning('მონაცემები შენახულია მხოლოდ ლოკალურად');
+            return false;
+        } catch (localError) {
+            console.error('Error saving to localStorage:', localError);
+            showError('მონაცემების შენახვა ვერ მოხერხდა');
+            return false;
+        }
+    }
+}
         
         // Handle login
         async function handleLogin() {
@@ -3302,10 +3308,8 @@ async function handleAddBook(e) {
         salesHistory.push(newSale);
         nextBookId = currentNextId + 1;
         
-        // Save to localStorage as backup
-        localStorage.setItem('bookmaster_books', JSON.stringify(books));
-        localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
-        localStorage.setItem('bookmaster_nextId', nextBookId.toString());
+// NEW: Save to both Firebase and localStorage
+await saveData();
         
         // Update UI
         renderBooks(books);
@@ -3738,24 +3742,8 @@ async function handleAddBook(e) {
                     salesHistory.splice(salesIndex, 1);
                 }
                 
-                // Save data to Firebase
-                const booksObj = {};
-                books.forEach(book => {
-                    booksObj[book.id] = book;
-                });
-                
-                const salesObj = {};
-                salesHistory.forEach(sale => {
-                    salesObj[sale.bookId] = sale;
-                });
-                
-                // Update Firebase
-                await database.ref('books').set(booksObj);
-                await database.ref('sales').set(salesObj);
-                
-                // Update localStorage
-                localStorage.setItem('bookmaster_books', JSON.stringify(books));
-                localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+// Save to both Firebase and localStorage
+await saveData();
                 
                 // Update UI
                 renderBooks(books);
@@ -3771,6 +3759,52 @@ async function handleAddBook(e) {
                 bookToDelete = null;
             }
         }
+        
+        // Listen for real-time updates from Firebase
+function setupRealtimeListeners() {
+    // Listen for book changes
+    database.ref('books').on('value', (snapshot) => {
+        const booksData = snapshot.val();
+        if (booksData) {
+            books = Object.values(booksData);
+            renderBooks(books);
+            console.log('Books updated in real-time');
+        }
+    });
+    
+    // Listen for sales changes
+    database.ref('sales').on('value', (snapshot) => {
+        const salesData = snapshot.val();
+        if (salesData) {
+            salesHistory = Object.values(salesData);
+            console.log('Sales updated in real-time');
+        }
+    });
+}
+
+async function migrateToFirebase() {
+    const savedBooks = localStorage.getItem('bookmaster_books');
+    const savedSales = localStorage.getItem('bookmaster_sales');
+    const savedNextId = localStorage.getItem('bookmaster_nextId');
+    
+    if (savedBooks && savedSales) {
+        showLoading('მონაცემების მიგრაცია Firebase-ზე...');
+        
+        try {
+            books = JSON.parse(savedBooks);
+            salesHistory = JSON.parse(savedSales);
+            nextBookId = parseInt(savedNextId) || (books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1);
+            
+            await saveDataToFirebase();
+            showSuccess('მონაცემები წარმატებით გადაიგზავნა Firebase-ზე!');
+        } catch (error) {
+            showError('მიგრაცია ვერ მოხერხდა: ' + error.message);
+        } finally {
+            hideLoading();
+        }
+    }
+}
+
         
         // Handle update book
         async function handleUpdateBook(e) {
@@ -3846,24 +3880,8 @@ async function handleAddBook(e) {
                     };
                 }
                 
-                // Save to Firebase
-                const booksObj = {};
-                books.forEach(book => {
-                    booksObj[book.id] = book;
-                });
-                
-                const salesObj = {};
-                salesHistory.forEach(sale => {
-                    salesObj[sale.bookId] = sale;
-                });
-                
-                // Update Firebase
-                await database.ref('books').set(booksObj);
-                await database.ref('sales').set(salesObj);
-                
-                // Update localStorage
-                localStorage.setItem('bookmaster_books', JSON.stringify(books));
-                localStorage.setItem('bookmaster_sales', JSON.stringify(salesHistory));
+// Save to both Firebase and localStorage
+await saveData();
                 
                 // Update UI
                 renderBooks(books);
