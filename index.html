@@ -2245,19 +2245,18 @@ function checkElements() {
         });
     }
 }
-
-// Call this after DOM loads
-document.addEventListener('DOMContentLoaded', checkElements);
-        
-     async function initApp() {
-    console.log('App initializing...');
+// Initialize app when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing app...');
     
-    // Make sure login page is visible
-    loginPage.style.display = 'flex';
-    mainPage.style.display = 'none';
+    // Immediately hide loading overlay
     loadingOverlay.style.display = 'none';
     
-    // Setup event listeners first
+    // Show login page
+    loginPage.style.display = 'flex';
+    mainPage.style.display = 'none';
+    
+    // Setup event listeners
     setupEventListeners();
     
     // Check if user is already logged in
@@ -2266,11 +2265,13 @@ document.addEventListener('DOMContentLoaded', checkElements);
         currentUser = savedUser;
         loginPage.style.display = 'none';
         mainPage.style.display = 'block';
-        await loadData();
+        // Load data after login
+        loadData();
     }
     
     console.log('App initialized successfully');
-}   
+});
+
         // Test Firebase connection
         async function testFirebaseConnection() {
             console.log('Testing Firebase connection...');
