@@ -2305,26 +2305,30 @@
             });
             
             // Modals
-            addBookBtn.addEventListener('click', () => {
-                addBookModal.style.display = 'flex';
-                selectedImages = [];
-                imagePreview.innerHTML = '';
-                addBookForm.reset();
-                bookColorSelect.value = '';
-                customColorContainer.classList.remove('show');
-                customColorInput.value = '';
-                document.getElementById('bookPrice').value = DEFAULT_BOOK_PRICE;
-                imageError.style.display = 'none';
-                uploadProgress.style.display = 'none';
-            });
+addBookBtn.addEventListener('click', () => {
+    addBookModal.style.display = 'flex';
+    selectedImages = []; // Clear the array
+    imagePreview.innerHTML = '';
+    addBookForm.reset();
+    bookColorSelect.value = '';
+    customColorContainer.classList.remove('show');
+    customColorInput.value = '';
+    document.getElementById('bookPrice').value = DEFAULT_BOOK_PRICE;
+    imageError.style.display = 'none';
+    uploadProgress.style.display = 'none';
+        bookImagesInput.value = ''; // ADD THIS LINE - clears file input
+
+});
             
-            closeAddModal.addEventListener('click', () => {
-                addBookModal.style.display = 'none';
-            });
-            
-            cancelAddBook.addEventListener('click', () => {
-                addBookModal.style.display = 'none';
-            });
+closeAddModal.addEventListener('click', () => {
+    addBookModal.style.display = 'none';
+    selectedImages = []; // ADD THIS LINE
+});
+
+cancelAddBook.addEventListener('click', () => {
+    addBookModal.style.display = 'none';
+    selectedImages = []; // ADD THIS LINE
+});
             
             incomeBtn.addEventListener('click', () => {
                 updateIncomeStats();
@@ -2448,14 +2452,17 @@
             
             confirmAction.addEventListener('click', handleConfirmDelete);
             
-            // Edit modal
-            closeEditModal.addEventListener('click', () => {
-                editBookModal.style.display = 'none';
-            });
-            
-            cancelEditBook.addEventListener('click', () => {
-                editBookModal.style.display = 'none';
-            });
+closeEditModal.addEventListener('click', () => {
+    editBookModal.style.display = 'none';
+    editSelectedImages = []; // ADD THIS LINE
+    editBookImagesInput.value = ''; // ADD THIS LINE - clear file input
+});
+
+cancelEditBook.addEventListener('click', () => {
+    editBookModal.style.display = 'none';
+    editSelectedImages = []; // ADD THIS LINE
+    editBookImagesInput.value = ''; // ADD THIS LINE - clear file input
+});
             
             // Delete all images button
             deleteImagesBtn.addEventListener('click', () => {
@@ -2918,46 +2925,54 @@
         }
         
         // Open edit book modal
-        function openEditBook(bookId) {
-            const book = books.find(b => b.id === bookId);
-            if (!book) return;
-            
-            editingBookId = bookId;
-            
-            document.getElementById('editBookTitle').value = book.title;
-            document.getElementById('editBookStock').value = book.stock;
-            document.getElementById('editBookPrice').value = book.price;
-            
-            const color = book.color || book.description.match(/ფერი:\s*(\w+)/)?.[1] || '';
-            if (['წითელი', 'ლურჯი', 'მწვანე', 'ყვითელი', 'შავი', 'თეთრი', 'ყავისფერი', 'ნაცრისფერი', 'ნარინჯისფერი', 'იასამნისფერი', 'ვარდისფერი'].includes(color)) {
-                editBookColorSelect.value = color;
-                editCustomColorContainer.classList.remove('show');
-            } else if (color) {
-                editBookColorSelect.value = 'other';
-                editCustomColorContainer.classList.add('show');
-                editCustomColorInput.value = color;
-            } else {
-                editBookColorSelect.value = '';
-                editCustomColorContainer.classList.remove('show');
-            }
-            
-            let description = book.description;
-            if (description.includes('ფერი:')) {
-                description = description.replace(/ფერი:\s*\w+/, '').replace(/\.\s*$/, '');
-            }
-            document.getElementById('editBookDescription').value = description.trim();
-            
-            editSelectedImages = [...book.images];
-            editImagePreview.innerHTML = '';
-            editSelectedImages.forEach((src, index) => {
-                createEditImagePreview(src, index);
-            });
-            
-            editImageError.style.display = editSelectedImages.length === 0 ? 'block' : 'none';
-            editUploadProgress.style.display = 'none';
-            
-            editBookModal.style.display = 'flex';
-        }
+function openEditBook(bookId) {
+    const book = books.find(b => b.id === bookId);
+    if (!book) return;
+    
+    editingBookId = bookId;
+    
+    // Clear the edit images array first
+    editSelectedImages = [];
+    editImagePreview.innerHTML = '';
+    
+    // Now repopulate with the book's actual images
+    editSelectedImages = [...book.images];
+    
+    document.getElementById('editBookTitle').value = book.title;
+    document.getElementById('editBookStock').value = book.stock;
+    document.getElementById('editBookPrice').value = book.price;
+    
+    const color = book.color || book.description.match(/ფერი:\s*(\w+)/)?.[1] || '';
+    if (['წითელი', 'ლურჯი', 'მწვანე', 'ყვითელი', 'შავი', 'თეთრი', 'ყავისფერი', 'ნაცრისფერი', 'ნარინჯისფერი', 'იასამნისფერი', 'ვარდისფერი'].includes(color)) {
+        editBookColorSelect.value = color;
+        editCustomColorContainer.classList.remove('show');
+    } else if (color) {
+        editBookColorSelect.value = 'other';
+        editCustomColorContainer.classList.add('show');
+        editCustomColorInput.value = color;
+    } else {
+        editBookColorSelect.value = '';
+        editCustomColorContainer.classList.remove('show');
+    }
+    
+    let description = book.description;
+    if (description.includes('ფერი:')) {
+        description = description.replace(/ფერი:\s*\w+/, '').replace(/\.\s*$/, '');
+    }
+    document.getElementById('editBookDescription').value = description.trim();
+    
+    // Show the book's images
+    editSelectedImages.forEach((src, index) => {
+        createEditImagePreview(src, index);
+    });
+    
+    editImageError.style.display = editSelectedImages.length === 0 ? 'block' : 'none';
+    editUploadProgress.style.display = 'none';
+    
+    editBookImagesInput.value = ''; // Clear file input
+    
+    editBookModal.style.display = 'flex';
+}
         
         // Handle sell book
         async function sellBook(bookId) {
@@ -3323,76 +3338,80 @@
         }
         
         // Handle image upload
-        async function handleImageUpload(files) {
-            const fileList = Array.from(files);
+// Handle image upload
+async function handleImageUpload(files) {
+    const fileList = Array.from(files);
+    
+    if (selectedImages.length + fileList.length > 10) {
+        showError('მაქსიმუმ 10 ფოტოს დამატება შეგიძლიათ');
+        return;
+    }
+    
+    showLoading('ფოტოების დამუშავება...');
+    uploadProgress.style.display = 'block';
+    progressFill.style.width = '0%';
+    progressText.textContent = '0%';
+    
+    let processedCount = 0;
+    const totalFiles = fileList.length;
+    
+    for (const file of fileList) {
+        try {
+            const progress = Math.round((processedCount / totalFiles) * 100);
+            progressFill.style.width = `${progress}%`;
+            progressText.textContent = `${progress}%`;
             
-            if (selectedImages.length + fileList.length > 10) {
-                showError('მაქსიმუმ 10 ფოტოს დამატება შეგიძლიათ');
-                return;
-            }
-            
-            showLoading('ფოტოების დამუშავება...');
-            uploadProgress.style.display = 'block';
-            progressFill.style.width = '0%';
-            progressText.textContent = '0%';
-            
-            let processedCount = 0;
-            const totalFiles = fileList.length;
-            
-            for (const file of fileList) {
-                try {
-                    const progress = Math.round((processedCount / totalFiles) * 100);
-                    progressFill.style.width = `${progress}%`;
-                    progressText.textContent = `${progress}%`;
-                    
-                    if (file.size > 5 * 1024 * 1024) {
-                        const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-                        showError(`სურათი "${file.name}" (${sizeMB}MB) აღემატება 5MB-ს`);
-                        processedCount++;
-                        continue;
-                    }
-                    
-                    let imageDataUrl;
-                    const fileName = file.name.toLowerCase();
-                    const isHeic = fileName.endsWith('.heic') || fileName.endsWith('.heif') || 
-                                  file.type === 'image/heic' || file.type === 'image/heif';
-                    
-                    if (isHeic && window.heic2any) {
-                        imageDataUrl = await convertHeicToJpeg(file);
-                    } else {
-                        imageDataUrl = await readFileAsDataURL(file);
-                    }
-                    
-                    if (imageDataUrl && imageDataUrl.startsWith('data:image')) {
-                        selectedImages.push(imageDataUrl);
-                        createImagePreview(imageDataUrl, selectedImages.length - 1);
-                        
-                        if (selectedImages.length > 0) {
-                            imageError.style.display = 'none';
-                        }
-                    }
-                    
-                } catch (error) {
-                    console.error('Error processing image:', file.name, error);
-                    showError(`სურათის "${file.name}" დამუშავება ვერ მოხერხდა`);
-                }
-                
+            if (file.size > 5 * 1024 * 1024) {
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                showError(`სურათი "${file.name}" (${sizeMB}MB) აღემატება 5MB-ს`);
                 processedCount++;
+                continue;
             }
             
-            progressFill.style.width = '100%';
-            progressText.textContent = '100%';
+            let imageDataUrl;
+            const fileName = file.name.toLowerCase();
+            const isHeic = fileName.endsWith('.heic') || fileName.endsWith('.heif') || 
+                          file.type === 'image/heic' || file.type === 'image/heif';
             
-            setTimeout(() => {
-                uploadProgress.style.display = 'none';
-            }, 1000);
-            
-            hideLoading();
-            
-            if (selectedImages.length > 0) {
-                showSuccess(`${selectedImages.length} ფოტო წარმატებით დაემატა!`);
+            if (isHeic && window.heic2any) {
+                imageDataUrl = await convertHeicToJpeg(file);
+            } else {
+                imageDataUrl = await readFileAsDataURL(file);
             }
+            
+            if (imageDataUrl && imageDataUrl.startsWith('data:image')) {
+                // Check if this image is already in the array
+                if (!selectedImages.some(img => img === imageDataUrl)) {
+                    selectedImages.push(imageDataUrl);
+                    createImagePreview(imageDataUrl, selectedImages.length - 1);
+                    
+                    if (selectedImages.length > 0) {
+                        imageError.style.display = 'none';
+                    }
+                }
+            }
+            
+        } catch (error) {
+            console.error('Error processing image:', file.name, error);
+            showError(`სურათის "${file.name}" დამუშავება ვერ მოხერხდა`);
         }
+        
+        processedCount++;
+    }
+    
+    progressFill.style.width = '100%';
+    progressText.textContent = '100%';
+    
+    setTimeout(() => {
+        uploadProgress.style.display = 'none';
+    }, 1000);
+    
+    hideLoading();
+    
+    if (fileList.length > 0) {
+        showSuccess(`${fileList.length} ფოტო წარმატებით დაემატა!`);
+    }
+}
         
         // Handle edit image upload
         async function handleEditImageUpload(files) {
@@ -3434,14 +3453,17 @@
                         imageDataUrl = await readFileAsDataURL(file);
                     }
                     
-                    if (imageDataUrl && imageDataUrl.startsWith('data:image')) {
-                        editSelectedImages.push(imageDataUrl);
-                        createEditImagePreview(imageDataUrl, editSelectedImages.length - 1);
-                        
-                        if (editSelectedImages.length > 0) {
-                            editImageError.style.display = 'none';
-                        }
-                    }
+if (imageDataUrl && imageDataUrl.startsWith('data:image')) {
+    // Check if this image is already in the array
+    if (!editSelectedImages.some(img => img === imageDataUrl)) {
+        editSelectedImages.push(imageDataUrl);
+        createEditImagePreview(imageDataUrl, editSelectedImages.length - 1);
+        
+        if (editSelectedImages.length > 0) {
+            editImageError.style.display = 'none';
+        }
+    }
+}
                     
                 } catch (error) {
                     console.error('Error processing edit image:', error);
